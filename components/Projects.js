@@ -1,14 +1,56 @@
+// components/Projects.js
 import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 
 export default function Projects() {
+  const canvasRef = useRef(null);
+
+  // === Background Cyber Particle Effect ===
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = 800;
+    };
+    window.addEventListener("resize", resize);
+    resize();
+
+    for (let i = 0; i < 70; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 1.4,
+        speedX: (Math.random() - 0.5) * 0.6,
+        speedY: (Math.random() - 0.5) * 0.6,
+      });
+    }
+
+    const draw = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "rgba(0, 255, 255, 0.5)";
+      particles.forEach((p) => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI);
+        ctx.fill();
+        p.x += p.speedX;
+        p.y += p.speedY;
+        if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
+      });
+      requestAnimationFrame(draw);
+    };
+    draw();
+    return () => window.removeEventListener("resize", resize);
+  }, []);
+
+  // === Project data ===
   const projects = [
     {
       name: "Project Cypher",
-      desc: `Project Cypher is a portable, high-security, AI-powered operating system designed for 
-      cybersecurity research and advanced automation. It boots from an external encrypted SATA SSD 
-      on any UEFI-compatible PC and is built on an immutable Linux base for maximum security and reliability.
-      The system integrates a local, voice-first AI assistant (STT → LLM → TTS) with strict isolation 
-      using containers, VMs, and microVMs for offline-first privacy and controlled AI execution.`,
+      tagline: "The Cognitive Security Operating Environment",
+      desc: `A portable, AI‑powered secure OS for privacy‑first computing and ethical automation.`,
       tech: [
         "Fedora Silverblue",
         "SELinux",
@@ -27,133 +69,124 @@ export default function Projects() {
     },
   ];
 
+  // === Card animation pattern ===
+  const cardVariants = {
+    hidden: { opacity: 0, y: 80, rotateX: -10 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      rotateX: 0,
+      transition: { duration: 0.8, type: "spring" },
+    },
+  };
+
   return (
     <section
       id="projects"
-      className="relative scroll-mt-32 py-20 px-6 bg-gradient-to-br from-gray-900 via-black to-gray-800 overflow-hidden text-gray-300"
+      className="relative scroll-mt-32 py-24 overflow-hidden bg-gradient-to-br from-black via-gray-900 to-cyan-950 text-gray-200"
     >
-      {/* Floating Glow Points */}
-      <div className="absolute inset-0 -z-10">
-        {[...Array(35)].map((_, i) => (
-          <motion.span
-            key={i}
-            className="absolute w-1 h-1 bg-blue-500 rounded-full"
-            initial={{ opacity: 0 }}
-            animate={{
-              opacity: [0.3, 1, 0.3],
-              y: [0, -25, 0],
-            }}
-            transition={{
-              duration: Math.random() * 3 + 3,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
-            style={{
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-          ></motion.span>
-        ))}
-      </div>
+      {/* Matrix Glow Canvas */}
+      <canvas
+        ref={canvasRef}
+        className="absolute top-0 left-0 w-full h-full opacity-40 -z-10"
+      ></canvas>
 
-      <div className="max-w-5xl mx-auto text-center">
-        {/* Animated Title */}
+      {/* Title Section */}
+      <div className="max-w-5xl mx-auto text-center mb-14">
         <motion.h2
-          className="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500 mb-10"
-          initial={{ opacity: 0, y: -40 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ y: -40, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8 }}
+          className="text-5xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500"
         >
-          Welcome to My Projects
+          Explore My Projects
         </motion.h2>
-
         <motion.p
-          className="text-gray-400 mb-14 max-w-2xl mx-auto leading-relaxed"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.5, duration: 0.6 }}
+          transition={{ delay: 0.3 }}
+          className="text-gray-400 text-lg mt-6 max-w-3xl mx-auto leading-relaxed"
         >
-          Here are some of the systems I’m building — focused on security,
-          privacy and intelligent automation.
+          Intelligent automation meets fortress‑grade security.  
+          <br />
+          These projects embody a vision where AI is trusted, transparent and human‑centered.
         </motion.p>
+      </div>
 
-        {/* Project Cards */}
-        <motion.div
-          className="space-y-12"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          variants={{
-            hidden: {},
-            visible: { transition: { staggerChildren: 0.2 } },
-          }}
-        >
-          {projects.map((project, index) => (
+      {/* Project Cards */}
+      <div className="max-w-6xl mx-auto flex flex-col gap-14 px-8">
+        {projects.map((project, i) => (
+          <motion.div
+            key={i}
+            variants={cardVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            className="relative bg-gray-900/70 border border-cyan-500/30 rounded-3xl p-10 shadow-lg overflow-hidden group"
+            whileHover={{
+              scale: 1.02,
+              boxShadow:
+                "0 0 30px rgba(34,211,238,0.4), 0 0 60px rgba(168,85,247,0.3)",
+            }}
+          >
+            {/* Glowing AI pulse */}
             <motion.div
-              key={index}
-              className="bg-gray-800 bg-opacity-70 rounded-2xl shadow-lg p-8 border border-gray-700 text-left hover:border-blue-500 transition-all duration-300 relative overflow-hidden"
-              variants={{
-                hidden: { opacity: 0, y: 40 },
-                visible: { opacity: 1, y: 0 },
+              className="absolute inset-0 bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-700 opacity-0 group-hover:opacity-10 blur-2xl transition-all duration-700"
+              animate={{
+                opacity: [0.1, 0.25, 0.1],
+                transition: { repeat: Infinity, duration: 6 },
               }}
-              whileHover={{
-                scale: 1.02,
-                boxShadow:
-                  "0 0 20px rgba(96,165,250,0.35), 0 0 40px rgba(147,197,253,0.25)",
-              }}
+            ></motion.div>
+
+            <motion.h3
+              whileHover={{ color: "#67e8f9" }}
+              className="text-4xl font-bold text-white mb-3"
             >
-              {/* Halo Effect */}
-              <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-20 bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-500 blur-xl transition duration-500"></div>
+              {project.name}
+            </motion.h3>
+            <p className="text-cyan-300 font-medium mb-6 italic">
+              {project.tagline}
+            </p>
+            <motion.p className="text-gray-300 mb-6 leading-relaxed">
+              {project.desc}
+            </motion.p>
 
-              {/* Project Name */}
-              <motion.h3
-                className="text-3xl font-bold text-white mb-4"
-                whileHover={{ color: "#38bdf8" }}
-              >
-                {project.name}
-              </motion.h3>
+            <div className="flex flex-wrap gap-3 mb-5">
+              {project.tech.map((tech, j) => (
+                <motion.span
+                  key={j}
+                  whileHover={{ scale: 1.1 }}
+                  className="px-3 py-1 text-sm rounded-full bg-gray-800 border border-cyan-500/30 text-blue-300 hover:text-blue-100 transition-all duration-300"
+                >
+                  {tech}
+                </motion.span>
+              ))}
+            </div>
 
-              {/* Description */}
-              <motion.p
-                className="text-gray-300 mb-6 leading-relaxed"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.3 }}
-              >
-                {project.desc}
-              </motion.p>
+            <p className="text-green-400 font-semibold">
+              🔹 Status: {project.status}
+            </p>
 
-              {/* Tech Stack Tags */}
-              <div className="flex flex-wrap gap-2 mb-4">
-                {project.tech.map((tech, i) => (
-                  <motion.span
-                    key={i}
-                    className="px-3 py-1 text-sm rounded-full bg-gray-700 text-blue-300 border border-blue-500/30 hover:border-blue-400 hover:text-blue-200 transition-all duration-300"
-                    whileHover={{ scale: 1.08 }}
-                  >
-                    {tech}
-                  </motion.span>
-                ))}
-              </div>
+            <motion.a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-block mt-6 font-bold text-purple-400 hover:text-purple-300 hover:underline transition-colors"
+              whileHover={{ scale: 1.05 }}
+            >
+              View on GitHub ↗
+            </motion.a>
 
-              {/* Status */}
-              <p className="text-green-400 font-medium mb-4">
-                <strong>Status:</strong> {project.status}
-              </p>
-
-              {/* Link */}
-              <motion.a
-                href={project.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block mt-2 text-purple-400 font-semibold hover:text-purple-300 hover:underline transition-colors"
-                whileHover={{ scale: 1.05 }}
-              >
-                View on GitHub ↗
-              </motion.a>
-            </motion.div>
-          ))}
-        </motion.div>
+            {/* Futuristic bottom line */}
+            <motion.div
+              className="absolute bottom-0 left-0 h-0.5 w-full bg-gradient-to-r from-cyan-500 via-blue-400 to-purple-500"
+              animate={{
+                opacity: [0.4, 1, 0.4],
+                transition: { repeat: Infinity, duration: 3 },
+              }}
+            />
+          </motion.div>
+        ))}
       </div>
     </section>
   );
