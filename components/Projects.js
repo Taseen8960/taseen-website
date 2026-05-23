@@ -1,192 +1,307 @@
-// components/Projects.js
-import { motion } from "framer-motion";
-import { useEffect, useRef } from "react";
+import { useState, useRef } from 'react';
+import { motion, useInView } from 'framer-motion';
 
-export default function Projects() {
-  const canvasRef = useRef(null);
+const projects = [
+  {
+    id: 1,
+    title: 'Project Cypher',
+    subtitle: 'The Cognitive Security Operating Environment',
+    desc: 'A portable, AI-powered secure OS for privacy-first computing and ethical automation. Built on Fedora Silverblue with SELinux, LUKS2 encryption, and local AI execution via llama.cpp and whisper.cpp.',
+    status: 'Active Development',
+    statusColor: 'var(--green)',
+    github: 'https://github.com/Taseen8960',
+    tags: ['Fedora Silverblue', 'SELinux', 'LUKS2', 'KVM/QEMU', 'Podman', 'Rust', 'Python', 'llama.cpp', 'whisper.cpp'],
+    color: 'var(--cyan)',
+    glow: 'rgba(34,211,238,0.15)',
+    icon: '🔐',
+    featured: true,
+  },
+  {
+    id: 2,
+    title: 'Personal Website v2',
+    subtitle: 'This very website you are on',
+    desc: 'A fully custom-built portfolio, blog, and life journal. Built with Next.js, Framer Motion, and deployed on Vercel. Features dark mode, 3D animations, and a blog system.',
+    status: 'Live',
+    statusColor: 'var(--cyan)',
+    github: 'https://github.com/Taseen8960/taseen-website',
+    tags: ['Next.js', 'React', 'Framer Motion', 'Tailwind', 'Vercel'],
+    color: 'var(--purple)',
+    glow: 'rgba(167,139,250,0.15)',
+    icon: '🌐',
+    featured: false,
+  },
+];
 
-  // === Background Cyber Particle Effect ===
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext("2d");
-    let particles = [];
-    const resize = () => {
-      canvas.width = window.innerWidth;
-      canvas.height = 800;
-    };
-    window.addEventListener("resize", resize);
-    resize();
+function ProjectCard({ project, index }) {
+  const [hovered, setHovered] = useState(false);
+  const [rotateX, setRotateX] = useState(0);
+  const [rotateY, setRotateY] = useState(0);
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-80px' });
 
-    for (let i = 0; i < 70; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 1.4,
-        speedX: (Math.random() - 0.5) * 0.6,
-        speedY: (Math.random() - 0.5) * 0.6,
-      });
-    }
+  const handleMouseMove = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    setRotateX(((y - rect.height / 2) / rect.height) * -8);
+    setRotateY(((x - rect.width / 2) / rect.width) * 8);
+  };
 
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "rgba(0, 255, 255, 0.5)";
-      particles.forEach((p) => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, 2 * Math.PI);
-        ctx.fill();
-        p.x += p.speedX;
-        p.y += p.speedY;
-        if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
-      });
-      requestAnimationFrame(draw);
-    };
-    draw();
-    return () => window.removeEventListener("resize", resize);
-  }, []);
-
-  // === Project data ===
-  const projects = [
-    {
-      name: "Project Cypher",
-      tagline: "The Cognitive Security Operating Environment",
-      desc: `A portable, AI‑powered secure OS for privacy‑first computing and ethical automation.`,
-      tech: [
-        "Fedora Silverblue",
-        "SELinux",
-        "LUKS2 Encryption",
-        "KVM/QEMU",
-        "Podman",
-        "Firecracker",
-        "Rust",
-        "Python",
-        "whisper.cpp",
-        "llama.cpp",
-        "Piper",
-      ],
-      status: "Active Development (MVP Running)",
-      link: "#",
-    },
-  ];
-
-  // === Card animation pattern ===
-  const cardVariants = {
-    hidden: { opacity: 0, y: 80, rotateX: -10 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      rotateX: 0,
-      transition: { duration: 0.8, type: "spring" },
-    },
+  const handleMouseLeave = () => {
+    setHovered(false);
+    setRotateX(0);
+    setRotateY(0);
   };
 
   return (
-    <section
-      id="projects"
-      className="relative scroll-mt-32 py-24 overflow-hidden bg-gradient-to-br from-black via-gray-900 to-cyan-950 text-gray-200"
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 60 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ delay: index * 0.15, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      style={{ perspective: '1000px' }}
     >
-      {/* Matrix Glow Canvas */}
-      <canvas
-        ref={canvasRef}
-        className="absolute top-0 left-0 w-full h-full opacity-40 -z-10"
-      ></canvas>
+      <motion.div
+        onMouseEnter={() => setHovered(true)}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        style={{
+          background: 'var(--surface)',
+          border: `1px solid ${hovered ? project.color : 'var(--border)'}`,
+          borderRadius: '24px',
+          padding: '32px',
+          position: 'relative',
+          overflow: 'hidden',
+          transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg) ${hovered ? 'translateY(-8px)' : 'translateY(0)'}`,
+          boxShadow: hovered ? `0 24px 60px ${project.glow}` : '0 4px 24px rgba(0,0,0,0.2)',
+          transition: 'all 0.3s cubic-bezier(0.22,1,0.36,1)',
+          cursor: 'default',
+        }}
+      >
+        {/* Gradient overlay on hover */}
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: `radial-gradient(circle at 50% 0%, ${project.glow} 0%, transparent 60%)`,
+          opacity: hovered ? 1 : 0,
+          transition: 'opacity 0.4s ease',
+          pointerEvents: 'none',
+          borderRadius: '24px',
+        }} />
 
-      {/* Title Section */}
-      <div className="max-w-5xl mx-auto text-center mb-14">
-        <motion.h2
-          initial={{ y: -40, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8 }}
-          className="text-5xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-500"
-        >
-          Explore My Projects
-        </motion.h2>
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="text-gray-400 text-lg mt-6 max-w-3xl mx-auto leading-relaxed"
-        >
-          Intelligent automation meets fortress‑grade security.  
-          <br />
-          These projects embody a vision where AI is trusted, transparent and human‑centered.
-        </motion.p>
-      </div>
+        {/* Featured badge */}
+        {project.featured && (
+          <div style={{
+            position: 'absolute',
+            top: '20px',
+            right: '20px',
+            fontFamily: "'Space Mono', monospace",
+            fontSize: '9px',
+            fontWeight: 700,
+            letterSpacing: '2px',
+            textTransform: 'uppercase',
+            color: 'var(--cyan)',
+            background: 'rgba(34,211,238,0.1)',
+            border: '1px solid rgba(34,211,238,0.25)',
+            padding: '4px 10px',
+            borderRadius: '20px',
+          }}>
+            Featured
+          </div>
+        )}
 
-      {/* Project Cards */}
-      <div className="max-w-6xl mx-auto flex flex-col gap-14 px-8">
-        {projects.map((project, i) => (
-          <motion.div
-            key={i}
-            variants={cardVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="relative bg-gray-900/70 border border-cyan-500/30 rounded-3xl p-10 shadow-lg overflow-hidden group"
-            whileHover={{
-              scale: 1.02,
-              boxShadow:
-                "0 0 30px rgba(34,211,238,0.4), 0 0 60px rgba(168,85,247,0.3)",
-            }}
-          >
-            {/* Glowing AI pulse */}
-            <motion.div
-              className="absolute inset-0 bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-700 opacity-0 group-hover:opacity-10 blur-2xl transition-all duration-700"
-              animate={{
-                opacity: [0.1, 0.25, 0.1],
-                transition: { repeat: Infinity, duration: 6 },
-              }}
-            ></motion.div>
+        {/* Top row */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '16px',
+          marginBottom: '20px',
+          position: 'relative',
+          zIndex: 1,
+        }}>
+          <div style={{
+            width: '52px',
+            height: '52px',
+            borderRadius: '14px',
+            background: `linear-gradient(135deg, ${project.glow} 0%, var(--surface2) 100%)`,
+            border: `1px solid ${project.color}33`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '24px',
+            flexShrink: 0,
+          }}>
+            {project.icon}
+          </div>
 
-            <motion.h3
-              whileHover={{ color: "#67e8f9" }}
-              className="text-4xl font-bold text-white mb-3"
-            >
-              {project.name}
-            </motion.h3>
-            <p className="text-cyan-300 font-medium mb-6 italic">
-              {project.tagline}
-            </p>
-            <motion.p className="text-gray-300 mb-6 leading-relaxed">
-              {project.desc}
-            </motion.p>
-
-            <div className="flex flex-wrap gap-3 mb-5">
-              {project.tech.map((tech, j) => (
-                <motion.span
-                  key={j}
-                  whileHover={{ scale: 1.1 }}
-                  className="px-3 py-1 text-sm rounded-full bg-gray-800 border border-cyan-500/30 text-blue-300 hover:text-blue-100 transition-all duration-300"
-                >
-                  {tech}
-                </motion.span>
-              ))}
+          <div style={{ flex: 1 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+              <h3 style={{
+                fontFamily: "'Syne', sans-serif",
+                fontSize: '20px',
+                fontWeight: 800,
+                color: 'var(--text)',
+              }}>
+                {project.title}
+              </h3>
+              <span style={{
+                fontFamily: "'Space Mono', monospace",
+                fontSize: '9px',
+                fontWeight: 700,
+                letterSpacing: '1.5px',
+                textTransform: 'uppercase',
+                color: project.statusColor,
+                background: `${project.statusColor}15`,
+                border: `1px solid ${project.statusColor}33`,
+                padding: '3px 8px',
+                borderRadius: '10px',
+              }}>
+                {project.status}
+              </span>
             </div>
-
-            <p className="text-green-400 font-semibold">
-              🔹 Status: {project.status}
+            <p style={{
+              fontFamily: "'Space Mono', monospace",
+              fontSize: '11px',
+              color: project.color,
+              letterSpacing: '0.5px',
+            }}>
+              {project.subtitle}
             </p>
+          </div>
+        </div>
 
-            <motion.a
-              href={project.link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block mt-6 font-bold text-purple-400 hover:text-purple-300 hover:underline transition-colors"
-              whileHover={{ scale: 1.05 }}
-            >
-              View on GitHub ↗
-            </motion.a>
+        {/* Description */}
+        <p style={{
+          fontSize: '14px',
+          color: 'var(--text2)',
+          lineHeight: 1.7,
+          marginBottom: '24px',
+          position: 'relative',
+          zIndex: 1,
+        }}>
+          {project.desc}
+        </p>
 
-            {/* Futuristic bottom line */}
-            <motion.div
-              className="absolute bottom-0 left-0 h-0.5 w-full bg-gradient-to-r from-cyan-500 via-blue-400 to-purple-500"
-              animate={{
-                opacity: [0.4, 1, 0.4],
-                transition: { repeat: Infinity, duration: 3 },
-              }}
-            />
-          </motion.div>
-        ))}
+        {/* Tags */}
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '8px',
+          marginBottom: '28px',
+          position: 'relative',
+          zIndex: 1,
+        }}>
+          {project.tags.map((tag) => (
+            <span key={tag} style={{
+              fontFamily: "'Space Mono', monospace",
+              fontSize: '10px',
+              fontWeight: 700,
+              color: 'var(--text3)',
+              background: 'var(--surface2)',
+              border: '1px solid var(--border)',
+              padding: '4px 10px',
+              borderRadius: '6px',
+              letterSpacing: '0.5px',
+            }}>
+              {tag}
+            </span>
+          ))}
+        </div>
+
+        {/* GitHub link */}
+        <motion.a
+          href={project.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.97 }}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            fontFamily: "'Space Mono', monospace",
+            fontSize: '12px',
+            fontWeight: 700,
+            color: project.color,
+            background: `${project.color}10`,
+            border: `1px solid ${project.color}30`,
+            padding: '10px 20px',
+            borderRadius: '10px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            position: 'relative',
+            zIndex: 1,
+            textDecoration: 'none',
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 2A10 10 0 002 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z"/>
+          </svg>
+          View on GitHub ↗
+        </motion.a>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+export default function Projects() {
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-100px' });
+
+  return (
+    <section style={{ padding: '100px 24px', position: 'relative' }}>
+      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+
+        {/* Header */}
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, y: 30 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          style={{ marginBottom: '60px' }}
+        >
+          <div className="section-tag">Projects</div>
+          <h2 className="section-title">What I've Built</h2>
+          <p style={{
+            fontSize: '16px',
+            color: 'var(--text2)',
+            maxWidth: '500px',
+            lineHeight: 1.7,
+          }}>
+            Intelligent automation meets fortress-grade security.
+            Every project reflects a vision where AI is trusted and human-centered.
+          </p>
+        </motion.div>
+
+        {/* Projects */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
+          gap: '24px',
+        }}>
+          {projects.map((project, i) => (
+            <ProjectCard key={project.id} project={project} index={i} />
+          ))}
+        </div>
+
+        {/* More coming */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={inView ? { opacity: 1 } : {}}
+          transition={{ delay: 0.5 }}
+          style={{
+            textAlign: 'center',
+            marginTop: '48px',
+            padding: '32px',
+            border: '1px dashed var(--border2)',
+            borderRadius: '20px',
+            color: 'var(--text3)',
+            fontFamily: "'Space Mono', monospace",
+            fontSize: '13px',
+          }}
+        >
+          🚀 More projects coming soon — stay tuned!
+        </motion.div>
       </div>
     </section>
   );
