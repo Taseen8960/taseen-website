@@ -8,14 +8,13 @@ const navLinks = [
   { href: '/about', label: 'About' },
   { href: '/blog', label: 'Blog' },
   { href: '/journey', label: 'Journey' },
-  { href: '/#projects', label: 'Projects' },
-  { href: '/#contact', label: 'Contact' },
 ];
 
 export default function Header({ theme, toggleTheme }) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const router = useRouter();
+  const isLight = theme === 'light';
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -23,9 +22,21 @@ export default function Header({ theme, toggleTheme }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [router.pathname]);
+  useEffect(() => { setMenuOpen(false); }, [router.pathname]);
+
+  const scrollToSection = (id) => {
+    if (router.pathname !== '/') {
+      router.push('/').then(() => {
+        setTimeout(() => {
+          const el = document.getElementById(id);
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+      });
+    } else {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   return (
     <>
@@ -35,70 +46,73 @@ export default function Header({ theme, toggleTheme }) {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         style={{
           position: 'fixed',
-          top: 0,
-          left: 0,
-          right: 0,
+          top: 0, left: 0, right: 0,
           zIndex: 1000,
-          padding: '0 24px',
+          padding: '0 32px',
           height: '64px',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           background: scrolled
-            ? 'rgba(10,10,15,0.85)'
+            ? isLight ? 'rgba(248,250,252,0.92)' : 'rgba(10,10,15,0.90)'
             : 'transparent',
-          backdropFilter: scrolled ? 'blur(20px)' : 'none',
+          backdropFilter: scrolled ? 'blur(24px)' : 'none',
+          WebkitBackdropFilter: scrolled ? 'blur(24px)' : 'none',
           borderBottom: scrolled
-            ? '1px solid rgba(255,255,255,0.06)'
+            ? `1px solid ${isLight ? 'rgba(0,0,0,0.08)' : 'rgba(255,255,255,0.06)'}`
             : '1px solid transparent',
-          transition: 'all 0.4s ease',
+          transition: 'all 0.4s cubic-bezier(0.22,1,0.36,1)',
         }}
       >
-        {/* Logo */}
+        {/* LEFT — Logo */}
         <Link href="/">
-          <motion.div
+          <motion.span
             whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.97 }}
             style={{
               fontFamily: "'Space Mono', monospace",
               fontWeight: 700,
-              fontSize: '16px',
-              color: 'var(--cyan)',
-              letterSpacing: '1px',
+              fontSize: '15px',
+              color: 'var(--text)',
+              letterSpacing: '0.5px',
               cursor: 'pointer',
             }}
           >
-            taseen<span style={{ color: 'var(--text2)' }}>.</span>
-            <span style={{ color: 'var(--text)' }}>dev</span>
-          </motion.div>
+            taseen<span style={{ color: 'var(--cyan)' }}>.dev</span>
+          </motion.span>
         </Link>
 
-        {/* Desktop Nav */}
-        <nav style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '8px',
-        }}
-          className="desktop-nav"
-        >
+        {/* RIGHT — Nav + scroll buttons + theme */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }} className="desktop-nav">
           {navLinks.map((link) => {
             const isActive = router.pathname === link.href;
             return (
               <Link key={link.href} href={link.href}>
                 <motion.span
-                  whileHover={{ color: 'var(--cyan)' }}
                   style={{
+                    display: 'block',
                     fontFamily: "'Space Mono', monospace",
                     fontSize: '12px',
                     fontWeight: 700,
-                    letterSpacing: '0.5px',
                     color: isActive ? 'var(--cyan)' : 'var(--text2)',
-                    padding: '6px 14px',
-                    borderRadius: '8px',
+                    padding: '7px 13px',
+                    borderRadius: '10px',
                     background: isActive ? 'rgba(34,211,238,0.08)' : 'transparent',
-                    border: isActive ? '1px solid rgba(34,211,238,0.2)' : '1px solid transparent',
+                    border: `1px solid ${isActive ? 'rgba(34,211,238,0.2)' : 'transparent'}`,
                     cursor: 'pointer',
                     transition: 'all 0.2s ease',
-                    display: 'block',
+                  }}
+                  onMouseEnter={e => {
+                    if (!isActive) {
+                      e.currentTarget.style.color = 'var(--text)';
+                      e.currentTarget.style.background = 'var(--surface2)';
+                    }
+                  }}
+                  onMouseLeave={e => {
+                    if (!isActive) {
+                      e.currentTarget.style.color = 'var(--text2)';
+                      e.currentTarget.style.background = 'transparent';
+                    }
                   }}
                 >
                   {link.label}
@@ -107,19 +121,96 @@ export default function Header({ theme, toggleTheme }) {
             );
           })}
 
-          {/* Theme Toggle */}
+          {/* Projects scroll button */}
+          <motion.span
+            onClick={() => scrollToSection('projects')}
+            style={{
+              display: 'block',
+              fontFamily: "'Space Mono', monospace",
+              fontSize: '12px',
+              fontWeight: 700,
+              color: 'var(--text2)',
+              padding: '7px 13px',
+              borderRadius: '10px',
+              background: 'transparent',
+              border: '1px solid transparent',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.color = 'var(--text)';
+              e.currentTarget.style.background = 'var(--surface2)';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.color = 'var(--text2)';
+              e.currentTarget.style.background = 'transparent';
+            }}
+          >
+            Projects
+          </motion.span>
+
+          {/* Contact scroll button */}
+          <motion.span
+            onClick={() => scrollToSection('contact')}
+            style={{
+              display: 'block',
+              fontFamily: "'Space Mono', monospace",
+              fontSize: '12px',
+              fontWeight: 700,
+              color: 'var(--text2)',
+              padding: '7px 13px',
+              borderRadius: '10px',
+              background: 'transparent',
+              border: '1px solid transparent',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.color = 'var(--text)';
+              e.currentTarget.style.background = 'var(--surface2)';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.color = 'var(--text2)';
+              e.currentTarget.style.background = 'transparent';
+            }}
+          >
+            Contact
+          </motion.span>
+
+          {/* Theme toggle */}
           <motion.button
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.1, rotate: 15 }}
+            whileTap={{ scale: 0.92 }}
             onClick={toggleTheme}
             style={{
               marginLeft: '8px',
-              width: '36px',
-              height: '36px',
-              borderRadius: '10px',
-              border: '1px solid var(--border2)',
+              width: '38px', height: '38px',
+              borderRadius: '12px',
+              border: `1px solid var(--border2)`,
               background: 'var(--surface)',
               color: 'var(--text)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '17px',
+              transition: 'all 0.3s ease',
+            }}
+          >
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </motion.button>
+        </div>
+
+        {/* Mobile right */}
+        <div style={{ display: 'none' }} className="mobile-right">
+          <motion.button
+            whileTap={{ scale: 0.92 }}
+            onClick={toggleTheme}
+            style={{
+              width: '36px', height: '36px',
+              borderRadius: '10px',
+              border: `1px solid var(--border2)`,
+              background: 'var(--surface)',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
@@ -129,97 +220,101 @@ export default function Header({ theme, toggleTheme }) {
           >
             {theme === 'dark' ? '☀️' : '🌙'}
           </motion.button>
-        </nav>
-
-        {/* Mobile Hamburger */}
-        <button
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="hamburger"
-          style={{
-            background: 'none',
-            border: '1px solid var(--border2)',
-            borderRadius: '8px',
-            padding: '8px',
-            cursor: 'pointer',
-            color: 'var(--text)',
-            display: 'none',
-            flexDirection: 'column',
-            gap: '4px',
-          }}
-        >
-          <span style={{ display: 'block', width: '20px', height: '2px', background: 'var(--text)', borderRadius: '2px', transition: 'all 0.3s', transform: menuOpen ? 'rotate(45deg) translate(4px, 6px)' : 'none' }} />
-          <span style={{ display: 'block', width: '20px', height: '2px', background: 'var(--text)', borderRadius: '2px', transition: 'all 0.3s', opacity: menuOpen ? 0 : 1 }} />
-          <span style={{ display: 'block', width: '20px', height: '2px', background: 'var(--text)', borderRadius: '2px', transition: 'all 0.3s', transform: menuOpen ? 'rotate(-45deg) translate(4px, -6px)' : 'none' }} />
-        </button>
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            style={{
+              background: 'var(--surface)',
+              border: `1px solid var(--border2)`,
+              borderRadius: '10px',
+              padding: '9px',
+              cursor: 'pointer',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '4px',
+            }}
+          >
+            {[0, 1, 2].map(i => (
+              <span key={i} style={{
+                display: 'block',
+                width: '20px', height: '2px',
+                background: 'var(--text)',
+                borderRadius: '2px',
+                transition: 'all 0.3s ease',
+                transform: menuOpen
+                  ? i === 0 ? 'rotate(45deg) translate(4px, 6px)'
+                  : i === 2 ? 'rotate(-45deg) translate(4px, -6px)'
+                  : 'scaleX(0)'
+                  : 'none',
+                opacity: menuOpen && i === 1 ? 0 : 1,
+              }} />
+            ))}
+          </button>
+        </div>
       </motion.header>
 
       {/* Mobile Menu */}
       <AnimatePresence>
         {menuOpen && (
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
+            initial={{ opacity: 0, y: -16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.25 }}
             style={{
               position: 'fixed',
-              top: '64px',
-              left: 0,
-              right: 0,
+              top: '72px', left: '12px', right: '12px',
               zIndex: 999,
-              background: 'rgba(10,10,15,0.97)',
-              backdropFilter: 'blur(20px)',
-              borderBottom: '1px solid var(--border)',
-              padding: '20px 24px',
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px',
+              background: isLight ? 'rgba(248,250,252,0.97)' : 'rgba(10,10,15,0.97)',
+              backdropFilter: 'blur(24px)',
+              borderRadius: '20px',
+              border: `1px solid var(--border)`,
+              padding: '12px',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
             }}
           >
-            {navLinks.map((link, i) => (
+            {[...navLinks,
+              { label: 'Projects', onClick: () => { setMenuOpen(false); scrollToSection('projects'); } },
+              { label: 'Contact', onClick: () => { setMenuOpen(false); scrollToSection('contact'); } },
+            ].map((link, i) => (
               <motion.div
-                key={link.href}
-                initial={{ opacity: 0, x: -20 }}
+                key={link.label}
+                initial={{ opacity: 0, x: -16 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.05 }}
+                transition={{ delay: i * 0.04 }}
               >
-                <Link href={link.href}>
-                  <span style={{
-                    display: 'block',
-                    fontFamily: "'Space Mono', monospace",
-                    fontSize: '14px',
-                    fontWeight: 700,
-                    color: router.pathname === link.href ? 'var(--cyan)' : 'var(--text2)',
-                    padding: '12px 16px',
-                    borderRadius: '10px',
-                    background: router.pathname === link.href ? 'rgba(34,211,238,0.08)' : 'transparent',
-                    cursor: 'pointer',
-                  }}>
+                {link.onClick ? (
+                  <span
+                    onClick={link.onClick}
+                    style={{
+                      display: 'block',
+                      fontFamily: "'Space Mono', monospace",
+                      fontSize: '13px', fontWeight: 700,
+                      color: 'var(--text2)',
+                      padding: '12px 16px',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                    }}
+                  >
                     {link.label}
                   </span>
-                </Link>
+                ) : (
+                  <Link href={link.href}>
+                    <span style={{
+                      display: 'block',
+                      fontFamily: "'Space Mono', monospace",
+                      fontSize: '13px', fontWeight: 700,
+                      color: router.pathname === link.href ? 'var(--cyan)' : 'var(--text2)',
+                      padding: '12px 16px',
+                      borderRadius: '12px',
+                      background: router.pathname === link.href ? 'rgba(34,211,238,0.08)' : 'transparent',
+                      cursor: 'pointer',
+                    }}>
+                      {link.label}
+                    </span>
+                  </Link>
+                )}
               </motion.div>
             ))}
-
-            <div style={{ paddingTop: '8px', borderTop: '1px solid var(--border)' }}>
-              <button
-                onClick={toggleTheme}
-                style={{
-                  fontFamily: "'Space Mono', monospace",
-                  fontSize: '13px',
-                  background: 'var(--surface)',
-                  border: '1px solid var(--border2)',
-                  borderRadius: '10px',
-                  color: 'var(--text)',
-                  padding: '10px 16px',
-                  cursor: 'pointer',
-                  width: '100%',
-                  textAlign: 'left',
-                }}
-              >
-                {theme === 'dark' ? '☀️ Light Mode' : '🌙 Dark Mode'}
-              </button>
-            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -227,7 +322,7 @@ export default function Header({ theme, toggleTheme }) {
       <style>{`
         @media (max-width: 768px) {
           .desktop-nav { display: none !important; }
-          .hamburger { display: flex !important; }
+          .mobile-right { display: flex !important; gap: 8px; align-items: center; }
         }
       `}</style>
     </>

@@ -16,7 +16,7 @@ export default function Home({ theme, toggleTheme }) {
 
       <Header theme={theme} toggleTheme={toggleTheme} />
       <main>
-        <Hero />
+        <Hero theme={theme} />
         <Skills />
         <Projects />
         <Contact />

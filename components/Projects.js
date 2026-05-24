@@ -10,7 +10,7 @@ const projects = [
     status: 'Active Development',
     statusColor: 'var(--green)',
     github: 'https://github.com/Taseen8960',
-    tags: ['Fedora Silverblue', 'SELinux', 'LUKS2', 'KVM/QEMU', 'Podman', 'Rust', 'Python', 'llama.cpp', 'whisper.cpp'],
+    tags: ['Fedora Silverblue', 'SELinux', 'LUKS2', 'KVM/QEMU', 'Podman', 'Rust', 'Python', 'llama.cpp'],
     color: 'var(--cyan)',
     glow: 'rgba(34,211,238,0.15)',
     icon: '🔐',
@@ -24,7 +24,7 @@ const projects = [
     status: 'Live',
     statusColor: 'var(--cyan)',
     github: 'https://github.com/Taseen8960/taseen-website',
-    tags: ['Next.js', 'React', 'Framer Motion', 'Tailwind', 'Vercel'],
+    tags: ['Next.js', 'React', 'Framer Motion', 'CSS', 'Vercel'],
     color: 'var(--purple)',
     glow: 'rgba(167,139,250,0.15)',
     icon: '🌐',
@@ -73,15 +73,17 @@ function ProjectCard({ project, index }) {
           position: 'relative',
           overflow: 'hidden',
           transform: `rotateX(${rotateX}deg) rotateY(${rotateY}deg) ${hovered ? 'translateY(-8px)' : 'translateY(0)'}`,
-          boxShadow: hovered ? `0 24px 60px ${project.glow}` : '0 4px 24px rgba(0,0,0,0.2)',
-          transition: 'all 0.3s cubic-bezier(0.22,1,0.36,1)',
+          boxShadow: hovered
+            ? `0 24px 60px ${project.glow}`
+            : '0 4px 24px rgba(0,0,0,0.2)',
+          transition: 'border-color 0.3s ease, box-shadow 0.3s ease',
           cursor: 'default',
+          height: '100%',
         }}
       >
-        {/* Gradient overlay on hover */}
+        {/* Gradient overlay */}
         <div style={{
-          position: 'absolute',
-          inset: 0,
+          position: 'absolute', inset: 0,
           background: `radial-gradient(circle at 50% 0%, ${project.glow} 0%, transparent 60%)`,
           opacity: hovered ? 1 : 0,
           transition: 'opacity 0.4s ease',
@@ -92,19 +94,14 @@ function ProjectCard({ project, index }) {
         {/* Featured badge */}
         {project.featured && (
           <div style={{
-            position: 'absolute',
-            top: '20px',
-            right: '20px',
+            position: 'absolute', top: '20px', right: '20px',
             fontFamily: "'Space Mono', monospace",
-            fontSize: '9px',
-            fontWeight: 700,
-            letterSpacing: '2px',
-            textTransform: 'uppercase',
+            fontSize: '9px', fontWeight: 700,
+            letterSpacing: '2px', textTransform: 'uppercase',
             color: 'var(--cyan)',
             background: 'rgba(34,211,238,0.1)',
             border: '1px solid rgba(34,211,238,0.25)',
-            padding: '4px 10px',
-            borderRadius: '20px',
+            padding: '4px 10px', borderRadius: '20px',
           }}>
             Featured
           </div>
@@ -112,57 +109,48 @@ function ProjectCard({ project, index }) {
 
         {/* Top row */}
         <div style={{
-          display: 'flex',
-          alignItems: 'flex-start',
-          gap: '16px',
-          marginBottom: '20px',
-          position: 'relative',
-          zIndex: 1,
+          display: 'flex', alignItems: 'flex-start',
+          gap: '16px', marginBottom: '20px',
+          position: 'relative', zIndex: 1,
         }}>
           <div style={{
-            width: '52px',
-            height: '52px',
-            borderRadius: '14px',
-            background: `linear-gradient(135deg, ${project.glow} 0%, var(--surface2) 100%)`,
+            width: '52px', height: '52px', borderRadius: '14px',
+            background: `linear-gradient(135deg, ${project.glow}, var(--surface2))`,
             border: `1px solid ${project.color}33`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '24px',
-            flexShrink: 0,
+            display: 'flex', alignItems: 'center',
+            justifyContent: 'center', fontSize: '24px', flexShrink: 0,
           }}>
             {project.icon}
           </div>
 
           <div style={{ flex: 1 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+            <div style={{
+              display: 'flex', alignItems: 'center',
+              gap: '10px', marginBottom: '4px',
+              flexWrap: 'wrap',
+            }}>
               <h3 style={{
                 fontFamily: "'Syne', sans-serif",
-                fontSize: '20px',
-                fontWeight: 800,
+                fontSize: '20px', fontWeight: 800,
                 color: 'var(--text)',
               }}>
                 {project.title}
               </h3>
               <span style={{
                 fontFamily: "'Space Mono', monospace",
-                fontSize: '9px',
-                fontWeight: 700,
-                letterSpacing: '1.5px',
-                textTransform: 'uppercase',
+                fontSize: '9px', fontWeight: 700,
+                letterSpacing: '1.5px', textTransform: 'uppercase',
                 color: project.statusColor,
                 background: `${project.statusColor}15`,
                 border: `1px solid ${project.statusColor}33`,
-                padding: '3px 8px',
-                borderRadius: '10px',
+                padding: '3px 8px', borderRadius: '10px',
               }}>
                 {project.status}
               </span>
             </div>
             <p style={{
               fontFamily: "'Space Mono', monospace",
-              fontSize: '11px',
-              color: project.color,
+              fontSize: '11px', color: project.color,
               letterSpacing: '0.5px',
             }}>
               {project.subtitle}
@@ -172,36 +160,27 @@ function ProjectCard({ project, index }) {
 
         {/* Description */}
         <p style={{
-          fontSize: '14px',
-          color: 'var(--text2)',
-          lineHeight: 1.7,
-          marginBottom: '24px',
-          position: 'relative',
-          zIndex: 1,
+          fontSize: '14px', color: 'var(--text2)',
+          lineHeight: 1.7, marginBottom: '24px',
+          position: 'relative', zIndex: 1,
         }}>
           {project.desc}
         </p>
 
         {/* Tags */}
         <div style={{
-          display: 'flex',
-          flexWrap: 'wrap',
-          gap: '8px',
-          marginBottom: '28px',
-          position: 'relative',
-          zIndex: 1,
+          display: 'flex', flexWrap: 'wrap',
+          gap: '8px', marginBottom: '28px',
+          position: 'relative', zIndex: 1,
         }}>
           {project.tags.map((tag) => (
             <span key={tag} style={{
               fontFamily: "'Space Mono', monospace",
-              fontSize: '10px',
-              fontWeight: 700,
+              fontSize: '10px', fontWeight: 700,
               color: 'var(--text3)',
               background: 'var(--surface2)',
               border: '1px solid var(--border)',
-              padding: '4px 10px',
-              borderRadius: '6px',
-              letterSpacing: '0.5px',
+              padding: '4px 10px', borderRadius: '6px',
             }}>
               {tag}
             </span>
@@ -216,22 +195,16 @@ function ProjectCard({ project, index }) {
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           style={{
-            display: 'inline-flex',
-            alignItems: 'center',
-            gap: '8px',
+            display: 'inline-flex', alignItems: 'center', gap: '8px',
             fontFamily: "'Space Mono', monospace",
-            fontSize: '12px',
-            fontWeight: 700,
+            fontSize: '12px', fontWeight: 700,
             color: project.color,
             background: `${project.color}10`,
             border: `1px solid ${project.color}30`,
-            padding: '10px 20px',
-            borderRadius: '10px',
-            cursor: 'pointer',
+            padding: '10px 20px', borderRadius: '10px',
+            cursor: 'pointer', textDecoration: 'none',
+            position: 'relative', zIndex: 1,
             transition: 'all 0.3s ease',
-            position: 'relative',
-            zIndex: 1,
-            textDecoration: 'none',
           }}
         >
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -249,7 +222,7 @@ export default function Projects() {
   const inView = useInView(ref, { once: true, margin: '-100px' });
 
   return (
-    <section style={{ padding: '100px 24px', position: 'relative' }}>
+    <section id="projects" style={{ padding: '100px 24px', position: 'relative' }}>
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
 
         {/* Header */}
@@ -263,17 +236,15 @@ export default function Projects() {
           <div className="section-tag">Projects</div>
           <h2 className="section-title">What I've Built</h2>
           <p style={{
-            fontSize: '16px',
-            color: 'var(--text2)',
-            maxWidth: '500px',
-            lineHeight: 1.7,
+            fontSize: '16px', color: 'var(--text2)',
+            maxWidth: '500px', lineHeight: 1.7,
           }}>
             Intelligent automation meets fortress-grade security.
             Every project reflects a vision where AI is trusted and human-centered.
           </p>
         </motion.div>
 
-        {/* Projects */}
+        {/* Cards */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))',
@@ -284,14 +255,13 @@ export default function Projects() {
           ))}
         </div>
 
-        {/* More coming */}
+        {/* Coming soon */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
           transition={{ delay: 0.5 }}
           style={{
-            textAlign: 'center',
-            marginTop: '48px',
+            textAlign: 'center', marginTop: '48px',
             padding: '32px',
             border: '1px dashed var(--border2)',
             borderRadius: '20px',

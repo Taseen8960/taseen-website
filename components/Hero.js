@@ -20,14 +20,14 @@ const particles = Array.from({ length: 60 }, (_, i) => ({
   duration: Math.random() * 3 + 2,
 }));
 
-export default function Hero() {
+export default function Hero({ theme }) {
   const [roleIndex, setRoleIndex] = useState(0);
   const [displayed, setDisplayed] = useState('');
   const [typing, setTyping] = useState(true);
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
   const heroRef = useRef(null);
+  const isLight = theme === 'light';
 
-  // Typewriter effect
   useEffect(() => {
     const current = roles[roleIndex];
     let i = 0;
@@ -62,7 +62,6 @@ export default function Hero() {
     return () => clearTimeout(timeout);
   }, [roleIndex, typing]);
 
-  // Mouse parallax
   useEffect(() => {
     const handleMouse = (e) => {
       if (!heroRef.current) return;
@@ -90,7 +89,7 @@ export default function Hero() {
         paddingTop: '64px',
       }}
     >
-      {/* Animated particles */}
+      {/* Particles */}
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}>
         {particles.map((p) => (
           <motion.div
@@ -102,11 +101,17 @@ export default function Hero() {
               width: `${p.size}px`,
               height: `${p.size}px`,
               borderRadius: '50%',
-              background: p.id % 3 === 0 ? 'var(--cyan)' : p.id % 3 === 1 ? 'var(--purple)' : 'var(--blue)',
+              background: p.id % 3 === 0
+                ? 'var(--cyan)'
+                : p.id % 3 === 1
+                ? 'var(--purple)'
+                : 'var(--blue)',
             }}
             animate={{
               y: [0, -20, 0],
-              opacity: [0.2, 0.8, 0.2],
+              opacity: isLight
+                ? [0.08, 0.25, 0.08]
+                : [0.2, 0.8, 0.2],
             }}
             transition={{
               duration: p.duration,
@@ -118,42 +123,48 @@ export default function Hero() {
         ))}
       </div>
 
-      {/* Parallax glow orbs */}
+      {/* Glow orb 1 */}
       <motion.div
         style={{
           position: 'absolute',
-          width: '600px',
-          height: '600px',
+          width: '600px', height: '600px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(34,211,238,0.08) 0%, transparent 70%)',
+          background: isLight
+            ? 'radial-gradient(circle, rgba(8,145,178,0.07) 0%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(34,211,238,0.08) 0%, transparent 70%)',
           filter: 'blur(60px)',
           pointerEvents: 'none',
-          x: mousePos.x * -30,
-          y: mousePos.y * -30,
-          top: '10%',
-          left: '20%',
+          top: '10%', left: '20%',
         }}
         animate={{ x: mousePos.x * -30, y: mousePos.y * -30 }}
         transition={{ type: 'spring', stiffness: 50, damping: 20 }}
       />
+
+      {/* Glow orb 2 */}
       <motion.div
         style={{
           position: 'absolute',
-          width: '500px',
-          height: '500px',
+          width: '500px', height: '500px',
           borderRadius: '50%',
-          background: 'radial-gradient(circle, rgba(167,139,250,0.08) 0%, transparent 70%)',
+          background: isLight
+            ? 'radial-gradient(circle, rgba(124,58,237,0.05) 0%, transparent 70%)'
+            : 'radial-gradient(circle, rgba(167,139,250,0.08) 0%, transparent 70%)',
           filter: 'blur(60px)',
           pointerEvents: 'none',
-          bottom: '10%',
-          right: '15%',
+          bottom: '10%', right: '15%',
         }}
         animate={{ x: mousePos.x * 20, y: mousePos.y * 20 }}
         transition={{ type: 'spring', stiffness: 50, damping: 20 }}
       />
 
-      {/* Main content */}
-      <div style={{ textAlign: 'center', zIndex: 1, padding: '0 24px', maxWidth: '900px' }}>
+      {/* Content */}
+      <div style={{
+        textAlign: 'center',
+        zIndex: 1,
+        padding: '0 24px',
+        maxWidth: '1000px',
+        width: '100%',
+      }}>
 
         {/* Badge */}
         <motion.div
@@ -170,8 +181,12 @@ export default function Hero() {
             letterSpacing: '2px',
             textTransform: 'uppercase',
             color: 'var(--cyan)',
-            background: 'rgba(34,211,238,0.08)',
-            border: '1px solid rgba(34,211,238,0.2)',
+            background: isLight
+              ? 'rgba(8,145,178,0.08)'
+              : 'rgba(34,211,238,0.08)',
+            border: `1px solid ${isLight
+              ? 'rgba(8,145,178,0.25)'
+              : 'rgba(34,211,238,0.2)'}`,
             padding: '6px 18px',
             borderRadius: '20px',
             marginBottom: '32px',
@@ -181,8 +196,10 @@ export default function Hero() {
             animate={{ opacity: [1, 0, 1] }}
             transition={{ duration: 1.5, repeat: Infinity }}
             style={{
-              width: '6px', height: '6px', borderRadius: '50%',
-              background: 'var(--cyan)', display: 'inline-block',
+              width: '6px', height: '6px',
+              borderRadius: '50%',
+              background: 'var(--cyan)',
+              display: 'inline-block',
             }}
           />
           Available for collaboration
@@ -195,17 +212,23 @@ export default function Hero() {
           transition={{ duration: 0.8, delay: 0.3 }}
           style={{
             fontFamily: "'Syne', sans-serif",
-            fontSize: 'clamp(42px, 8vw, 88px)',
+            fontSize: 'clamp(28px, 5vw, 76px)',
             fontWeight: 800,
-            lineHeight: 1.0,
+            lineHeight: 1.05,
             marginBottom: '16px',
-            background: 'linear-gradient(135deg, #ffffff 0%, #94a3b8 60%, var(--cyan) 100%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            backgroundClip: 'text',
+            whiteSpace: 'nowrap',
+            ...(isLight ? {
+              color: '#0f172a',
+              WebkitTextFillColor: '#0f172a',
+            } : {
+              background: 'linear-gradient(135deg, #ffffff 0%, #94a3b8 60%, #22d3ee 100%)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text',
+            }),
           }}
         >
-          S.M. Taseen<br />Kabir
+          S.M. Taseen Kabir
         </motion.h1>
 
         {/* Typewriter */}
@@ -215,17 +238,20 @@ export default function Hero() {
           transition={{ delay: 0.6 }}
           style={{
             fontFamily: "'Space Mono', monospace",
-            fontSize: 'clamp(14px, 2.5vw, 20px)',
+            fontSize: 'clamp(13px, 2.2vw, 20px)',
             color: 'var(--cyan)',
             marginBottom: '24px',
-            minHeight: '30px',
+            minHeight: '32px',
           }}
         >
           {displayed}
           <motion.span
             animate={{ opacity: [1, 0] }}
             transition={{ duration: 0.6, repeat: Infinity }}
-            style={{ borderRight: '2px solid var(--cyan)', marginLeft: '2px' }}
+            style={{
+              borderRight: '2px solid var(--cyan)',
+              marginLeft: '2px',
+            }}
           />
         </motion.div>
 
@@ -235,7 +261,7 @@ export default function Hero() {
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
           style={{
-            fontSize: 'clamp(14px, 2vw, 17px)',
+            fontSize: 'clamp(13px, 1.8vw, 17px)',
             color: 'var(--text2)',
             maxWidth: '560px',
             margin: '0 auto 48px',
@@ -246,24 +272,34 @@ export default function Hero() {
           Building the future — one line at a time.
         </motion.p>
 
-        {/* CTA Buttons */}
+        {/* Buttons */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1 }}
-          style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}
+          style={{
+            display: 'flex',
+            gap: '16px',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+          }}
         >
           <Link href="/#projects">
             <motion.span
-              whileHover={{ scale: 1.04, boxShadow: '0 0 30px rgba(34,211,238,0.3)' }}
+              whileHover={{
+                scale: 1.04,
+                boxShadow: isLight
+                  ? '0 0 30px rgba(8,145,178,0.3)'
+                  : '0 0 30px rgba(34,211,238,0.3)',
+              }}
               whileTap={{ scale: 0.97 }}
               style={{
                 display: 'inline-block',
                 fontFamily: "'Space Mono', monospace",
                 fontSize: '13px',
                 fontWeight: 700,
-                letterSpacing: '1px',
-                color: 'var(--bg)',
+                letterSpacing: '0.5px',
+                color: '#ffffff',
                 background: 'var(--cyan)',
                 padding: '14px 32px',
                 borderRadius: '12px',
@@ -277,17 +313,21 @@ export default function Hero() {
 
           <Link href="/blog">
             <motion.span
-              whileHover={{ scale: 1.04, borderColor: 'var(--cyan)', color: 'var(--cyan)' }}
+              whileHover={{
+                scale: 1.04,
+                borderColor: 'var(--cyan)',
+                color: 'var(--cyan)',
+              }}
               whileTap={{ scale: 0.97 }}
               style={{
                 display: 'inline-block',
                 fontFamily: "'Space Mono', monospace",
                 fontSize: '13px',
                 fontWeight: 700,
-                letterSpacing: '1px',
+                letterSpacing: '0.5px',
                 color: 'var(--text2)',
                 background: 'transparent',
-                border: '1px solid var(--border2)',
+                border: `1px solid var(--border2)`,
                 padding: '14px 32px',
                 borderRadius: '12px',
                 cursor: 'pointer',
@@ -322,12 +362,19 @@ export default function Hero() {
             }}
           >
             <span>Scroll</span>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg width="16" height="16" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 5v14M5 12l7 7 7-7" />
             </svg>
           </motion.div>
         </motion.div>
       </div>
+
+      <style>{`
+        @media (max-width: 600px) {
+          h1 { white-space: normal !important; }
+        }
+      `}</style>
     </section>
   );
 }
