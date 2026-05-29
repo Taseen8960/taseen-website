@@ -5,6 +5,7 @@ import { motion, useInView } from 'framer-motion';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { blogPosts } from '../../data/blog-posts';
+import { ThreeDCard, GlowOrb } from '../../components/ThreeDCard'; // ThreeDCard ও GlowOrb ইম্পোর্ট করা হলো
 
 function BlogCard({ post, index }) {
   const [hovered, setHovered] = useState(false);
@@ -19,145 +20,149 @@ function BlogCard({ post, index }) {
       transition={{ delay: index * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
     >
       <Link href={`/blog/${post.slug}`}>
-        <motion.div
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-          style={{
-            background: hovered ? 'var(--surface2)' : 'var(--surface)',
-            border: `1px solid ${hovered ? post.color : 'var(--border)'}`,
-            borderRadius: '20px',
-            padding: '32px',
-            cursor: 'pointer',
-            transition: 'all 0.3s cubic-bezier(0.22,1,0.36,1)',
-            boxShadow: hovered ? `0 20px 50px ${post.color}20` : '0 4px 20px rgba(0,0,0,0.15)',
-            transform: hovered ? 'translateY(-6px)' : 'translateY(0)',
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        >
-          {/* Glow overlay */}
-          <div style={{
-            position: 'absolute',
-            inset: 0,
-            background: `radial-gradient(circle at 0% 0%, ${post.color}10 0%, transparent 60%)`,
-            opacity: hovered ? 1 : 0,
-            transition: 'opacity 0.4s ease',
-            pointerEvents: 'none',
-            borderRadius: '20px',
-          }} />
-
-          {/* Top row */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: '20px',
-          }}>
+        {/* ThreeDCard দিয়ে পুরো ব্লগ কার্ডটি র‍্যাপ করা হলো */}
+        <ThreeDCard glowColor={`${post.color}25`} intensity={6} style={{ height: '100%' }}>
+          <motion.div
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            style={{
+              background: hovered ? 'var(--surface2)' : 'var(--surface)',
+              border: `1px solid ${hovered ? post.color : 'var(--border)'}`,
+              borderRadius: '20px',
+              padding: '32px',
+              cursor: 'pointer',
+              transition: 'all 0.3s cubic-bezier(0.22,1,0.36,1)',
+              boxShadow: hovered ? `0 20px 50px ${post.color}20` : '0 4px 20px rgba(0,0,0,0.15)',
+              transform: hovered ? 'translateY(-6px)' : 'translateY(0)',
+              position: 'relative',
+              overflow: 'hidden',
+              height: '100%', // height 100% নিশ্চিত করা হলো যেন ৩ডি কার্ডের সাইজ অনুযায়ী বসে
+            }}
+          >
+            {/* Glow overlay */}
             <div style={{
-              width: '48px',
-              height: '48px',
-              borderRadius: '14px',
-              background: `${post.color}15`,
-              border: `1px solid ${post.color}30`,
+              position: 'absolute',
+              inset: 0,
+              background: `radial-gradient(circle at 0% 0%, ${post.color}10 0%, transparent 60%)`,
+              opacity: hovered ? 1 : 0,
+              transition: 'opacity 0.4s ease',
+              pointerEvents: 'none',
+              borderRadius: '20px',
+            }} />
+
+            {/* Top row */}
+            <div style={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: '22px',
+              justifyContent: 'space-between',
+              marginBottom: '20px',
             }}>
-              {post.icon}
-            </div>
-
-            <div style={{
-              fontFamily: "'Space Mono', monospace",
-              fontSize: '11px',
-              color: 'var(--text3)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
-            }}>
-              <span>{post.readTime}</span>
-              <span style={{
-                width: '4px',
-                height: '4px',
-                borderRadius: '50%',
-                background: 'var(--text3)',
-                display: 'inline-block',
-              }} />
-              <span>{new Date(post.date).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-              })}</span>
-            </div>
-          </div>
-
-          {/* Title */}
-          <h2 style={{
-            fontFamily: "'Syne', sans-serif",
-            fontSize: '22px',
-            fontWeight: 800,
-            color: hovered ? 'var(--text)' : 'var(--text)',
-            marginBottom: '10px',
-            lineHeight: 1.2,
-            transition: 'color 0.3s',
-          }}>
-            {post.title}
-          </h2>
-
-          {/* Excerpt */}
-          <p style={{
-            fontSize: '14px',
-            color: 'var(--text2)',
-            lineHeight: 1.7,
-            marginBottom: '24px',
-          }}>
-            {post.excerpt}
-          </p>
-
-          {/* Tags */}
-          <div style={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: '6px',
-            marginBottom: '24px',
-          }}>
-            {post.tags.map((tag) => (
-              <span key={tag} style={{
-                fontFamily: "'Space Mono', monospace",
-                fontSize: '10px',
-                fontWeight: 700,
-                color: post.color,
-                background: `${post.color}10`,
-                border: `1px solid ${post.color}25`,
-                padding: '3px 10px',
-                borderRadius: '6px',
-                letterSpacing: '0.3px',
+              <div style={{
+                width: '48px',
+                height: '48px',
+                borderRadius: '14px',
+                background: `${post.color}15`,
+                border: `1px solid ${post.color}30`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '22px',
               }}>
-                {tag}
-              </span>
-            ))}
-          </div>
+                {post.icon}
+              </div>
 
-          {/* Read more */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            fontFamily: "'Space Mono', monospace",
-            fontSize: '12px',
-            fontWeight: 700,
-            color: hovered ? post.color : 'var(--text3)',
-            transition: 'color 0.3s ease',
-          }}>
-            Read Article
-            <motion.span
-              animate={{ x: hovered ? 4 : 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              →
-            </motion.span>
-          </div>
-        </motion.div>
+              <div style={{
+                fontFamily: "'Space Mono', monospace",
+                fontSize: '11px',
+                color: 'var(--text3)',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '12px',
+              }}>
+                <span>{post.readTime}</span>
+                <span style={{
+                  width: '4px',
+                  height: '4px',
+                  borderRadius: '50%',
+                  background: 'var(--text3)',
+                  display: 'inline-block',
+                }} />
+                <span>{new Date(post.date).toLocaleDateString('en-US', {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}</span>
+              </div>
+            </div>
+
+            {/* Title */}
+            <h2 style={{
+              fontFamily: "'Syne', sans-serif",
+              fontSize: '22px',
+              fontWeight: 800,
+              color: 'var(--text)',
+              marginBottom: '10px',
+              lineHeight: 1.2,
+              transition: 'color 0.3s',
+            }}>
+              {post.title}
+            </h2>
+
+            {/* Excerpt */}
+            <p style={{
+              fontSize: '14px',
+              color: 'var(--text2)',
+              lineHeight: 1.7,
+              marginBottom: '24px',
+            }}>
+              {post.excerpt}
+            </p>
+
+            {/* Tags */}
+            <div style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '6px',
+              marginBottom: '24px',
+            }}>
+              {post.tags.map((tag) => (
+                <span key={tag} style={{
+                  fontFamily: "'Space Mono', monospace",
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  color: post.color,
+                  background: `${post.color}10`,
+                  border: `1px solid ${post.color}25`,
+                  padding: '3px 10px',
+                  borderRadius: '6px',
+                  letterSpacing: '0.3px',
+                }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {/* Read more */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontFamily: "'Space Mono', monospace",
+              fontSize: '12px',
+              fontWeight: 700,
+              color: hovered ? post.color : 'var(--text3)',
+              transition: 'color 0.3s ease',
+            }}>
+              Read Article
+              <motion.span
+                animate={{ x: hovered ? 4 : 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                →
+              </motion.span>
+            </div>
+          </motion.div>
+        </ThreeDCard>
       </Link>
     </motion.div>
   );

@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { journeyData } from '../data/journey';
+import { ThreeDCard } from './ThreeDCard'; // ThreeDCard ইম্পোর্ট করা হলো
 
 function TimelineItem({ item, index, isLast }) {
   const ref = useRef(null);
@@ -18,146 +19,147 @@ function TimelineItem({ item, index, isLast }) {
         marginBottom: isLast ? 0 : '48px',
       }}
     >
-      {/* Card */}
-      <motion.div
-        initial={{ opacity: 0, x: isLeft ? -50 : 50 }}
-        animate={inView ? { opacity: 1, x: 0 } : {}}
-        transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        style={{
-          width: 'calc(50% - 40px)',
-          background: hovered ? 'var(--surface2)' : 'var(--surface)',
-          border: `1px solid ${hovered ? item.color : 'var(--border)'}`,
-          borderRadius: '20px',
-          padding: '28px',
-          position: 'relative',
-          transition: 'all 0.3s cubic-bezier(0.22,1,0.36,1)',
-          boxShadow: hovered ? `0 16px 40px ${item.color}20` : '0 4px 20px rgba(0,0,0,0.2)',
-          cursor: 'default',
-        }}
-      >
-        {/* Current badge */}
-        {item.current && (
+      {/* Width wrapper — ThreeDCard এর ফুল উইডথ প্রবলেম ফিক্স করার জন্য */}
+      <div style={{ width: 'calc(50% - 40px)' }}>
+        <ThreeDCard
+          glowColor={`${item.color}25`}
+          intensity={6}
+          style={{
+            width: '100%',
+            background: 'var(--surface)',
+            border: `1px solid var(--border)`,
+            borderRadius: '20px',
+            padding: '28px',
+            position: 'relative',
+            cursor: 'default',
+          }}
+        >
           <motion.div
-            animate={{ opacity: [0.6, 1, 0.6] }}
-            transition={{ duration: 2, repeat: Infinity }}
-            style={{
-              position: 'absolute',
-              top: '16px',
-              right: '16px',
-              fontFamily: "'Space Mono', monospace",
-              fontSize: '9px',
-              fontWeight: 700,
-              letterSpacing: '2px',
-              textTransform: 'uppercase',
-              color: item.color,
-              background: `${item.color}15`,
-              border: `1px solid ${item.color}40`,
-              padding: '3px 10px',
-              borderRadius: '20px',
-            }}
+            initial={{ opacity: 0, x: isLeft ? -50 : 50 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            onMouseEnter={() => setHovered(true)}
+            onMouseLeave={() => setHovered(false)}
+            style={{ position: 'relative', zIndex: 1 }}
           >
-            ● Now
-          </motion.div>
-        )}
+            {/* Current badge */}
+            {item.current && (
+              <motion.div
+                animate={{ opacity: [0.6, 1, 0.6] }}
+                transition={{ duration: 2, repeat: Infinity }}
+                style={{
+                  position: 'absolute',
+                  top: '0px',
+                  right: '0px',
+                  fontFamily: "'Space Mono', monospace",
+                  fontSize: '9px',
+                  fontWeight: 700,
+                  letterSpacing: '2px',
+                  textTransform: 'uppercase',
+                  color: item.color,
+                  background: `${item.color}15`,
+                  border: `1px solid ${item.color}40`,
+                  padding: '3px 10px',
+                  borderRadius: '20px',
+                }}
+              >
+                ● Now
+              </motion.div>
+            )}
 
-        {/* Year */}
-        <div style={{
-          fontFamily: "'Space Mono', monospace",
-          fontSize: '11px',
-          fontWeight: 700,
-          letterSpacing: '2px',
-          color: item.color,
-          marginBottom: '10px',
-          textTransform: 'uppercase',
-        }}>
-          {item.year}
-        </div>
-
-        {/* Icon + Title */}
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          marginBottom: '8px',
-        }}>
-          <div style={{
-            width: '40px',
-            height: '40px',
-            borderRadius: '12px',
-            background: `${item.color}15`,
-            border: `1px solid ${item.color}30`,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '20px',
-            flexShrink: 0,
-          }}>
-            {item.icon}
-          </div>
-          <div>
-            <h3 style={{
-              fontFamily: "'Syne', sans-serif",
-              fontSize: '18px',
-              fontWeight: 800,
-              color: 'var(--text)',
-              lineHeight: 1.2,
-            }}>
-              {item.title}
-            </h3>
-            <p style={{
+            {/* Year */}
+            <div style={{
               fontFamily: "'Space Mono', monospace",
               fontSize: '11px',
-              color: item.color,
-              letterSpacing: '0.3px',
-            }}>
-              {item.subtitle}
-            </p>
-          </div>
-        </div>
-
-        {/* Description */}
-        <p style={{
-          fontSize: '13px',
-          color: 'var(--text2)',
-          lineHeight: 1.7,
-          marginBottom: '16px',
-        }}>
-          {item.desc}
-        </p>
-
-        {/* Tags */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-          {item.tags.map((tag) => (
-            <span key={tag} style={{
-              fontFamily: "'Space Mono', monospace",
-              fontSize: '10px',
               fontWeight: 700,
-              color: 'var(--text3)',
-              background: 'var(--surface2)',
-              border: '1px solid var(--border)',
-              padding: '3px 8px',
-              borderRadius: '6px',
+              letterSpacing: '2px',
+              color: item.color,
+              marginBottom: '10px',
+              textTransform: 'uppercase',
             }}>
-              {tag}
-            </span>
-          ))}
-        </div>
+              {item.year}
+            </div>
 
-        {/* Arrow pointing to timeline */}
-        <div style={{
-          position: 'absolute',
-          top: '32px',
-          [isLeft ? 'right' : 'left']: '-10px',
-          width: '0',
-          height: '0',
-          borderTop: '8px solid transparent',
-          borderBottom: '8px solid transparent',
-          [isLeft ? 'borderLeft' : 'borderRight']: `10px solid ${hovered ? item.color : 'var(--border)'}`,
-          transition: 'border-color 0.3s ease',
-        }} />
-      </motion.div>
+            {/* Icon + Title */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+              <div style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '12px',
+                background: `${item.color}15`,
+                border: `1px solid ${item.color}30`,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '20px',
+                flexShrink: 0,
+              }}>
+                {item.icon}
+              </div>
+              <div>
+                <h3 style={{
+                  fontFamily: "'Syne', sans-serif",
+                  fontSize: '18px',
+                  fontWeight: 800,
+                  color: 'var(--text)',
+                  lineHeight: 1.2,
+                }}>
+                  {item.title}
+                </h3>
+                <p style={{
+                  fontFamily: "'Space Mono', monospace",
+                  fontSize: '11px',
+                  color: item.color,
+                  letterSpacing: '0.3px',
+                }}>
+                  {item.subtitle}
+                </p>
+              </div>
+            </div>
+
+            {/* Description */}
+            <p style={{
+              fontSize: '13px',
+              color: 'var(--text2)',
+              lineHeight: 1.7,
+              marginBottom: '16px',
+            }}>
+              {item.desc}
+            </p>
+
+            {/* Tags */}
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+              {item.tags.map((tag) => (
+                <span key={tag} style={{
+                  fontFamily: "'Space Mono', monospace",
+                  fontSize: '10px',
+                  fontWeight: 700,
+                  color: 'var(--text3)',
+                  background: 'var(--surface2)',
+                  border: '1px solid var(--border)',
+                  padding: '3px 8px',
+                  borderRadius: '6px',
+                }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+
+            {/* Arrow */}
+            <div style={{
+              position: 'absolute',
+              top: '28px',
+              [isLeft ? 'right' : 'left']: '-10px',
+              width: '0',
+              height: '0',
+              borderTop: '8px solid transparent',
+              borderBottom: '8px solid transparent',
+              [isLeft ? 'borderLeft' : 'borderRight']: `10px solid ${hovered ? item.color : 'var(--border)'}`,
+              transition: 'border-color 0.3s ease',
+            }} />
+          </motion.div>
+        </ThreeDCard>
+      </div>
 
       {/* Center dot */}
       <motion.div
@@ -172,13 +174,9 @@ function TimelineItem({ item, index, isLast }) {
           width: '16px',
           height: '16px',
           borderRadius: '50%',
-          background: item.current
-            ? item.color
-            : 'var(--bg)',
+          background: item.current ? item.color : 'var(--bg)',
           border: `3px solid ${item.color}`,
-          boxShadow: hovered || item.current
-            ? `0 0 20px ${item.color}`
-            : 'none',
+          boxShadow: hovered || item.current ? `0 0 20px ${item.color}` : 'none',
           transition: 'box-shadow 0.3s ease',
           zIndex: 2,
         }}
