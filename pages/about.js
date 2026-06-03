@@ -2,7 +2,6 @@ import { useRef, useState } from 'react';
 import Head from 'next/head';
 import Image from 'next/image';
 import { motion, useInView } from 'framer-motion';
-import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Link from 'next/link';
 import { ThreeDCard, GlowOrb, FloatingElement } from '../components/ThreeDCard';
@@ -191,7 +190,6 @@ export default function About({ theme, toggleTheme }) {
         <meta name="description" content="Learn about S.M. Taseen Kabir — cybersecurity enthusiast, AI explorer, programmer, writer, and nature photographer from Dhaka, Bangladesh." />
       </Head>
 
-      <Header theme={theme} toggleTheme={toggleTheme} />
 
       <main style={{ paddingTop: '64px' }}>
 

@@ -1,143 +1,177 @@
-import { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect, useState, useRef } from 'react';
 
 export default function CustomCursor() {
-  const [pos, setPos] = useState({ x: 0, y: 0 });
-  const [trail, setTrail] = useState({ x: 0, y: 0 });
+  const dotRef = useRef(null);
+  const ringRef = useRef(null);
+  const pos = useRef({ x: 0, y: 0 });
+  const trail = useRef({ x: 0, y: 0 });
   const [hovered, setHovered] = useState(false);
   const [clicked, setClicked] = useState(false);
-  const [hidden, setHidden] = useState(true);
-  const [label, setLabel] = useState('');
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const move = (e) => {
-      setPos({ x: e.clientX, y: e.clientY });
-      setHidden(false);
-    };
+    if (window.matchMedia('(pointer: coarse)').matches) return;
 
-    const handleLeave = () => setHidden(true);
-    const handleEnter = () => setHidden(false);
-
-    const handleDown = () => setClicked(true);
-    const handleUp = () => setClicked(false);
-
-    // Hover detection
-    const addHover = () => {
-      document.querySelectorAll('a, button, [role="button"], input, textarea, select, .cursor-hover').forEach(el => {
-        el.addEventListener('mouseenter', (e) => {
-          setHovered(true);
-          setLabel(el.dataset.cursor || '');
-        });
-        el.addEventListener('mouseleave', () => {
-          setHovered(false);
-          setLabel('');
-        });
-      });
-    };
-
-    window.addEventListener('mousemove', move);
-    document.addEventListener('mouseleave', handleLeave);
-    document.addEventListener('mouseenter', handleEnter);
-    window.addEventListener('mousedown', handleDown);
-    window.addEventListener('mouseup', handleUp);
-
-    addHover();
-    const observer = new MutationObserver(addHover);
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    return () => {
-      window.removeEventListener('mousemove', move);
-      document.removeEventListener('mouseleave', handleLeave);
-      document.removeEventListener('mouseenter', handleEnter);
-      window.removeEventListener('mousedown', handleDown);
-      window.removeEventListener('mouseup', handleUp);
-      observer.disconnect();
-    };
-  }, []);
-
-  // Smooth trail
-  useEffect(() => {
     let raf;
+
+    const onMove = (e) => {
+      pos.current = { x: e.clientX, y: e.clientY };
+      if (!visible) setVisible(true);
+
+      // অ্যাডভান্সড ডাবল-চেক হোভার ডিটেকশন
+      const target = e.target;
+      if (target) {
+        // ১. স্ট্যান্ডার্ড ট্যাগ ডিটেকশন
+        const isHoverable = target.closest('a, button, [role="button"], input, textarea, select, [onClick]');
+        
+        // ২. ব্যাকআপ ডিটেকশন (যদি বাটনের ভেতরের টেক্সট বা স্প্যান মাউস ব্লক করে)
+        const parentAttribute = target.parentElement?.closest('a, button, [role="button"]');
+        
+        // ৩. ক্লাসনেম বা কন্টেন্ট ডিটেকশন (আপনার বাটনগুলোর নাম ধরে ফোর্স হোভার)
+        const textContent = target.textContent?.trim().toLowerCase();
+        const isNavButton = textContent === 'projects' || textContent === 'contact' || target.className?.toString().toLowerCase().includes('btn');
+
+        setHovered(!!isHoverable || !!parentAttribute || isNavButton);
+      }
+    };
+
+    const onDown = () => setClicked(true);
+    const onUp = () => setClicked(false);
+    const onLeave = () => setVisible(false);
+    const onEnter = () => setVisible(true);
+
+    window.addEventListener('mousemove', onMove, { passive: true });
+    window.addEventListener('mousedown', onDown);
+    window.addEventListener('mouseup', onUp);
+    document.addEventListener('mouseleave', onLeave);
+    document.addEventListener('mouseenter', onEnter);
+
     const animate = () => {
-      setTrail(prev => ({
-        x: prev.x + (pos.x - prev.x) * 0.12,
-        y: prev.y + (pos.y - prev.y) * 0.12,
-      }));
+      trail.current.x += (pos.current.x - trail.current.x) * 0.24;
+      trail.current.y += (pos.current.y - trail.current.y) * 0.24;
+
+      if (dotRef.current) {
+        dotRef.current.style.transform = `translate(${pos.current.x}px, ${pos.current.y}px)`;
+      }
+      if (ringRef.current) {
+        ringRef.current.style.transform = `translate(${trail.current.x}px, ${trail.current.y}px)`;
+      }
       raf = requestAnimationFrame(animate);
     };
     raf = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(raf);
-  }, [pos]);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener('mousemove', onMove);
+      window.removeEventListener('mousedown', onDown);
+      window.removeEventListener('mouseup', onUp);
+      document.removeEventListener('mouseleave', onLeave);
+      document.removeEventListener('mouseenter', onEnter);
+    };
+  }, [visible]);
 
   if (typeof window !== 'undefined' && window.matchMedia('(pointer: coarse)').matches) {
-    return null; // Hide on touch devices
+    return null;
   }
 
   return (
     <>
-      {/* Main dot */}
-      <div style={{
-        position: 'fixed',
-        left: pos.x,
-        top: pos.y,
-        transform: 'translate(-50%, -50%)',
-        width: clicked ? '6px' : '8px',
-        height: clicked ? '6px' : '8px',
-        borderRadius: '50%',
-        background: '#22d3ee',
-        pointerEvents: 'none',
-        zIndex: 99999,
-        opacity: hidden ? 0 : 1,
-        transition: 'width 0.1s, height 0.1s, opacity 0.3s',
-        boxShadow: '0 0 8px rgba(34,211,238,0.8)',
-        mixBlendMode: 'screen',
-      }} />
+      {/* ১. মেইন কোর: আনকমন টেক্নো-স্প্লিন্টার */}
+      <div
+        ref={dotRef}
+        style={{
+          position: 'fixed',
+          top: 0, left: 0,
+          zIndex: 999999,
+          pointerEvents: 'none',
+          opacity: visible ? 1 : 0,
+          transition: 'opacity 0.2s',
+          willChange: 'transform',
+        }}
+      >
+        <div style={{
+          width: '16px',
+          height: '16px',
+          background: hovered ? '#ffffff' : '#22d3ee',
+          clipPath: 'polygon(50% 0%, 65% 35%, 100% 50%, 65% 65%, 50% 100%, 35% 65%, 0% 50%, 35% 35%)',
+          transform: hovered 
+            ? 'translate(-8px, -8px) rotate(135deg) scale(0.6)' 
+            : clicked 
+            ? 'translate(-8px, -8px) scale(0.5) rotate(45deg)' 
+            : 'translate(-8px, -8px) rotate(15deg)',
+          filter: hovered
+            ? 'drop-shadow(0 0 10px rgba(255,255,255,0.9))'
+            : 'drop-shadow(0 0 8px rgba(34,211,238,0.7))',
+          transition: 'all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+        }} />
+      </div>
 
-      {/* Trailing ring */}
-      <div style={{
-        position: 'fixed',
-        left: trail.x,
-        top: trail.y,
-        transform: 'translate(-50%, -50%)',
-        width: hovered ? '52px' : clicked ? '28px' : '36px',
-        height: hovered ? '52px' : clicked ? '28px' : '36px',
-        borderRadius: '50%',
-        border: `1.5px solid ${hovered ? 'rgba(34,211,238,0.8)' : 'rgba(34,211,238,0.4)'}`,
-        pointerEvents: 'none',
-        zIndex: 99998,
-        opacity: hidden ? 0 : 1,
-        transition: 'width 0.3s cubic-bezier(0.22,1,0.36,1), height 0.3s cubic-bezier(0.22,1,0.36,1), border-color 0.3s, opacity 0.3s',
-        background: hovered ? 'rgba(34,211,238,0.06)' : 'transparent',
-      }}>
-        {/* Label inside ring */}
-        <AnimatePresence>
-          {label && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.8 }}
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                fontFamily: "'Space Mono', monospace",
-                fontSize: '9px',
-                fontWeight: 700,
-                color: '#22d3ee',
-                whiteSpace: 'nowrap',
-                letterSpacing: '1px',
-              }}
-            >
-              {label}
-            </motion.div>
+      {/* ২. আউটার ট্রেইল: নিউラル লকিং ফ্রেম */}
+      <div
+        ref={ringRef}
+        style={{
+          position: 'fixed',
+          top: 0, left: 0,
+          zIndex: 999998,
+          pointerEvents: 'none',
+          opacity: visible ? 1 : 0,
+          transition: 'opacity 0.3s',
+          willChange: 'transform',
+        }}
+      >
+        <div style={{
+          width: '28px',
+          height: '28px',
+          position: 'relative',
+          transform: hovered 
+            ? 'translate(-14px, -14px) scale(1.4)' 
+            : clicked 
+            ? 'translate(-14px, -14px) scale(0.7)' 
+            : 'translate(-14px, -14px) rotate(-30deg)',
+          transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}>
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            borderLeft: `1.5px solid ${hovered ? '#ffffff' : 'rgba(34,211,238,0.6)'}`,
+            borderTop: `1.5px solid ${hovered ? '#ffffff' : 'rgba(34,211,238,0.6)'}`,
+            clipPath: 'polygon(0 0, 100% 0, 0 100%)',
+            opacity: hovered ? 0.3 : 1,
+            transition: 'all 0.2s',
+          }} />
+          
+          <div style={{
+            position: 'absolute',
+            inset: 0,
+            borderRight: `1.5px solid ${hovered ? '#ffffff' : 'rgba(34,211,238,0.6)'}`,
+            borderBottom: `1.5px solid ${hovered ? '#ffffff' : 'rgba(34,211,238,0.6)'}`,
+            clipPath: 'polygon(100% 100%, 100% 0, 0 100%)',
+            opacity: hovered ? 0.3 : 1,
+            transition: 'all 0.2s',
+          }} />
+
+          {hovered && (
+            <div style={{
+              position: 'absolute',
+              top: '50%', left: '50%',
+              width: '8px', height: '8px',
+              border: '1px solid #22d3ee',
+              transform: 'translate(-50%, -50%) rotate(45deg)',
+              boxShadow: '0 0 12px rgba(34,211,238,0.6)',
+              animation: 'cyberGlitchPulse 0.4s infinite linear'
+            }} />
           )}
-        </AnimatePresence>
+        </div>
       </div>
 
       <style>{`
-        * { cursor: none !important; }
-        @media (pointer: coarse) { * { cursor: auto !important; } }
+        @keyframes cyberGlitchPulse {
+          0%, 100% { transform: translate(-50%, -50%) rotate(45deg) scale(1); opacity: 0.8; }
+          50% { transform: translate(-50%, -50%) rotate(45deg) scale(1.3); opacity: 0.4; }
+        }
+        @media (pointer: fine) {
+          *, *::before, *::after { cursor: none !important; }
+        }
       `}</style>
     </>
   );

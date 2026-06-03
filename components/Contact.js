@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { GlowOrb } from './ThreeDCard';
+import { BsThreads } from "react-icons/bs";
 
 const contacts = [
   {
@@ -66,13 +67,23 @@ const contacts = [
   {
     icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.492c-1.53-.69-3.17-1.2-4.885-1.49a.075.075 0 00-.079.036c-.21.369-.444.85-.608 1.23a18.566 18.566 0 00-5.487 0 12.36 12.36 0 00-.617-1.23A.077.077 0 008.562 3c-1.714.29-3.354.8-4.885 1.491a.07.07 0 00-.032.027C.533 9.093-.32 13.555.099 17.961a.08.08 0 00.031.055 20.03 20.03 0 005.993 2.98.078.078 0 00.084-.026c.462-.62.874-1.275 1.226-1.963.021-.04.001-.088-.041-.104a13.201 13.201 0 01-1.872-.878.075.075 0 01-.008-.125c.126-.093.252-.19.372-.287a.075.075 0 01.078-.01c3.927 1.764 8.18 1.764 12.061 0a.075.075 0 01.079.009c.12.098.245.195.372.288a.075.075 0 01-.006.125c-.598.344-1.22.635-1.873.877a.075.075 0 00-.041.105c.36.687.772 1.341 1.225 1.962a.077.077 0 00.084.028 19.963 19.963 0 006.002-2.981.076.076 0 00.032-.054c.5-5.094-.838-9.52-3.549-13.442a.06.06 0 00-.031-.028zM8.02 15.278c-1.182 0-2.157-1.069-2.157-2.38 0-1.312.956-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.956 2.38-2.157 2.38zm7.975 0c-1.183 0-2.157-1.069-2.157-2.38 0-1.312.955-2.38 2.157-2.38 1.21 0 2.176 1.077 2.157 2.38 0 1.312-.946 2.38-2.157 2.38z"/></svg>,
     label: 'Discord',
-    display: 'Coming soon...',
-    link: '#',
+    display: 'smtaseenkabir',
+    link: 'https://discord.com/users/smtaseenkabir',
     color: '#818cf8',
-    glow: 'rgba(129,140,248,0.15)',
+    glow: 'rgba(129,140,248,0.35)',
     gradient: 'linear-gradient(135deg, #4f46e5, #818cf8)',
-    available: false,
+    available: true,
   },
+  {
+  icon: <BsThreads size={24} />,
+  label: 'Threads',
+  display: '@smtaseenkabir',
+  link: 'https://www.threads.net/@smtaseenkabir',
+  color: '#ffffff',
+  glow: 'rgba(255,255,255,0.3)',
+  gradient: 'linear-gradient(135deg, #000000, #262626)',
+  available: true,
+},
   {
     icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>,
     label: 'Twitter / X',
@@ -91,16 +102,6 @@ const contacts = [
     color: '#34d399',
     glow: 'rgba(52,211,153,0.15)',
     gradient: 'linear-gradient(135deg, #065f46, #34d399)',
-    available: false,
-  },
-  {
-    icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 2c1.99 0 3.84.65 5.34 1.73L5.73 17.34A7.963 7.963 0 014 12c0-4.41 3.59-8 8-8zm0 16c-1.99 0-3.84-.65-5.34-1.73l11.61-11.61A7.963 7.963 0 0120 12c0 4.41-3.59 8-8 8z"/></svg>,
-    label: 'Threads',
-    display: 'Coming soon...',
-    link: '#',
-    color: '#e2e8f0',
-    glow: 'rgba(226,232,240,0.1)',
-    gradient: 'linear-gradient(135deg, #334155, #e2e8f0)',
     available: false,
   },
   {
@@ -163,9 +164,7 @@ function ContactCard({ icon, label, display, link, color, glow, gradient, availa
           gap: '14px',
           padding: '28px 16px',
           borderRadius: '20px',
-          background: hovered
-            ? 'var(--surface2)'
-            : 'var(--surface)',
+          background: hovered ? 'var(--surface2)' : 'var(--surface)',
           border: `1px solid ${hovered ? color : 'var(--border)'}`,
           boxShadow: hovered
             ? `0 24px 60px ${glow}, 0 0 0 1px ${color}20, inset 0 1px 0 rgba(255,255,255,0.08)`
@@ -179,7 +178,6 @@ function ContactCard({ icon, label, display, link, color, glow, gradient, availa
           overflow: 'hidden',
         }}
       >
-        {/* Dynamic shine */}
         {hovered && (
           <div style={{
             position: 'absolute', inset: 0,
@@ -188,7 +186,6 @@ function ContactCard({ icon, label, display, link, color, glow, gradient, availa
           }} />
         )}
 
-        {/* Top shimmer line */}
         {hovered && (
           <motion.div
             initial={{ scaleX: 0 }}
@@ -203,11 +200,8 @@ function ContactCard({ icon, label, display, link, color, glow, gradient, availa
           />
         )}
 
-        {/* Icon box */}
         <motion.div
-          animate={hovered ? {
-            boxShadow: `0 8px 32px ${glow}`,
-          } : { boxShadow: 'none' }}
+          animate={hovered ? { boxShadow: `0 8px 32px ${glow}` } : { boxShadow: 'none' }}
           style={{
             width: '56px', height: '56px',
             borderRadius: '16px',
@@ -223,7 +217,6 @@ function ContactCard({ icon, label, display, link, color, glow, gradient, availa
           {icon}
         </motion.div>
 
-        {/* Label */}
         <div style={{ textAlign: 'center', position: 'relative', zIndex: 1 }}>
           <div style={{
             fontFamily: "'Space Mono', monospace",
@@ -247,7 +240,6 @@ function ContactCard({ icon, label, display, link, color, glow, gradient, availa
           </div>
         </div>
 
-        {/* Soon badge */}
         {!available && (
           <div style={{
             position: 'absolute', top: '10px', right: '10px',
@@ -267,6 +259,111 @@ function ContactCard({ icon, label, display, link, color, glow, gradient, availa
   );
 }
 
+function MessageForm() {
+  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState('');
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setStatus('sending');
+    
+    setTimeout(() => {
+      setStatus('success');
+      setFormData({ name: '', email: '', message: '' });
+    }, 1500);
+  };
+
+  return (
+    <div style={{
+      background: 'var(--surface)',
+      border: '1px solid var(--border)',
+      padding: '32px',
+      borderRadius: '24px',
+      position: 'relative',
+      overflow: 'hidden',
+    }}>
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: 'radial-gradient(ellipse at 0% 0%, rgba(34,211,238,0.04) 0%, transparent 60%)',
+        pointerEvents: 'none',
+      }} />
+
+      <h3 style={{
+        fontFamily: "'Space Mono', monospace",
+        fontSize: '13px', fontWeight: 700,
+        letterSpacing: '2px', color: 'var(--cyan, #22d3ee)',
+        marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '8px'
+      }}>
+        <span style={{ width: '6px', height: '6px', background: 'var(--cyan, #22d3ee)', borderRadius: '50%' }} />
+        SEND ENCRYPTED MESSAGE
+      </h3>
+
+      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+        <div>
+          <label style={{ display: 'block', fontFamily: "'Space Mono', monospace", fontSize: '9px', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '8px' }}>Name</label>
+          <input
+            type="text"
+            name="name"
+            required
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Your Alias"
+            style={{ width: '100%', padding: '12px 16px', background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text)', fontSize: '13px', outline: 'none', transition: 'all 0.3s' }}
+            onFocus={(e) => e.target.style.borderColor = 'var(--cyan, #22d3ee)'}
+            onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
+          />
+        </div>
+
+        <div>
+          <label style={{ display: 'block', fontFamily: "'Space Mono', monospace", fontSize: '9px', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '8px' }}>Email</label>
+          <input
+            type="email"
+            name="email"
+            required
+            value={formData.email}
+            onChange={handleChange}
+            placeholder="your@email.com"
+            style={{ width: '100%', padding: '12px 16px', background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text)', fontSize: '13px', outline: 'none', transition: 'all 0.3s' }}
+            onFocus={(e) => e.target.style.borderColor = 'var(--cyan, #22d3ee)'}
+            onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
+          />
+        </div>
+
+        <div>
+          <label style={{ display: 'block', fontFamily: "'Space Mono', monospace", fontSize: '9px', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '8px' }}>Message</label>
+          <textarea
+            name="message"
+            required
+            rows="4"
+            value={formData.message}
+            onChange={handleChange}
+            placeholder="Transmission payload..."
+            style={{ width: '100%', padding: '12px 16px', background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text)', fontSize: '13px', outline: 'none', resize: 'none', transition: 'all 0.3s' }}
+            onFocus={(e) => e.target.style.borderColor = 'var(--cyan, #22d3ee)'}
+            onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
+          />
+        </div>
+
+        <button
+          type="submit"
+          disabled={status === 'sending'}
+          style={{
+            width: '100%', padding: '14px', background: 'var(--cyan, #22d3ee)', color: '#000000', fontWeight: 700, fontFamily: "'Space Mono', monospace", fontSize: '12px', letterSpacing: '2px', textTransform: 'uppercase', border: 'none', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.3s', boxShadow: '0 4px 20px rgba(34,211,238,0.2)'
+          }}
+          onMouseEnter={(e) => e.target.style.boxShadow = '0 4px 30px rgba(34,211,238,0.5)'}
+          onMouseLeave={(e) => e.target.style.boxShadow = '0 4px 20px rgba(34,211,238,0.2)'}
+        >
+          {status === 'sending' ? 'TRANSMITTING...' : status === 'success' ? 'MESSAGE SENT ✓' : 'Send Message →'}
+        </button>
+      </form>
+    </div>
+  );
+}
+
 export default function Contact() {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: '-100px' });
@@ -275,13 +372,11 @@ export default function Contact() {
 
   return (
     <section id="contact" style={{ padding: '100px 24px', position: 'relative', overflow: 'hidden' }}>
-
-      {/* Glow orbs */}
+      
       <GlowOrb color="rgba(34,211,238,0.08)" size={600} top="-5%" left="5%" />
       <GlowOrb color="rgba(167,139,250,0.07)" size={500} bottom="5%" right="5%" />
       <GlowOrb color="rgba(244,114,182,0.05)" size={400} top="50%" left="35%" />
 
-      {/* Animated floating particles */}
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
         {[...Array(20)].map((_, i) => (
           <motion.div
@@ -377,16 +472,34 @@ export default function Contact() {
           </motion.div>
         </motion.div>
 
-        {/* Cards grid */}
-        <div style={{
+        {/* Layout Grid */}
+        <div className="contact-layout-grid" style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))',
-          gap: '14px',
+          gridTemplateColumns: '1fr',
+          gap: '32px',
           marginBottom: '64px',
         }}>
-          {contacts.map((c, i) => (
-            <ContactCard key={c.label} {...c} index={i} />
-          ))}
+          
+          {/* Form */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={inView ? { opacity: 1, x: 0 } : {}}
+            transition={{ duration: 0.6, delay: 0.2 }}
+          >
+            <MessageForm />
+          </motion.div>
+
+          {/* Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+            gap: '14px',
+          }}>
+            {contacts.map((c, i) => (
+              <ContactCard key={c.label} {...c} index={i} />
+            ))}
+          </div>
+
         </div>
 
         {/* Bottom section */}
@@ -404,7 +517,6 @@ export default function Contact() {
             overflow: 'hidden',
           }}
         >
-          {/* Inner glow */}
           <div style={{
             position: 'absolute', inset: 0,
             background: 'radial-gradient(ellipse at 50% 0%, rgba(34,211,238,0.06) 0%, transparent 60%)',
@@ -434,6 +546,14 @@ export default function Contact() {
           </p>
         </motion.div>
       </div>
+
+      <style>{`
+        @media (min-width: 992px) {
+          .contact-layout-grid {
+            grid-template-columns: 1fr 1.2fr !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }

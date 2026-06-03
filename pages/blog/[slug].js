@@ -2,7 +2,6 @@ import { useRef } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
-import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { blogPosts } from '../../data/blog-posts';
 
@@ -159,7 +158,6 @@ export default function BlogPost({ post, prev, next, theme, toggleTheme }) {
         <meta property="og:description" content={post.excerpt} />
       </Head>
 
-      <Header theme={theme} toggleTheme={toggleTheme} />
 
       <main style={{ paddingTop: '64px' }}>
         <article style={{ padding: '60px 24px 100px' }}>

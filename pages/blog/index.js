@@ -2,7 +2,6 @@ import { useState, useRef } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
-import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { blogPosts } from '../../data/blog-posts';
 import { ThreeDCard, GlowOrb } from '../../components/ThreeDCard'; // ThreeDCard ও GlowOrb ইম্পোর্ট করা হলো
@@ -196,7 +195,6 @@ export default function BlogIndex({ theme, toggleTheme }) {
         />
       </Head>
 
-      <Header theme={theme} toggleTheme={toggleTheme} />
 
       <main style={{ paddingTop: '64px' }}>
         <section style={{ padding: '80px 24px 60px' }}>
