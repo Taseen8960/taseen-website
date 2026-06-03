@@ -4,7 +4,9 @@ import dynamic from 'next/dynamic';
 import CustomCursor from '../components/CustomCursor';
 import LoadingScreen from '../components/LoadingScreen';
 import PageTransition from '../components/PageTransition';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
+// ১. Vercel Speed Insights ইমপোর্ট করা হলো
+import { SpeedInsights } from '@vercel/speed-insights/next';
 
 // Three.js background — no SSR
 const ThreeBackground = dynamic(
@@ -63,6 +65,9 @@ export default function MyApp({ Component, pageProps, router }) {
           </div>
         </PageTransition>
       )}
+
+      {/* ২. স্পিড ইনসাইটস ট্র্যাকিং কম্পোনেন্ট এখানে যুক্ত করা হলো */}
+      <SpeedInsights />
     </>
   );
 }
