@@ -75,15 +75,15 @@ const contacts = [
     available: true,
   },
   {
-  icon: <BsThreads size={24} />,
-  label: 'Threads',
-  display: '@smtaseenkabir',
-  link: 'https://www.threads.net/@smtaseenkabir',
-  color: '#ffffff',
-  glow: 'rgba(255,255,255,0.3)',
-  gradient: 'linear-gradient(135deg, #000000, #262626)',
-  available: true,
-},
+    icon: <BsThreads size={24} />,
+    label: 'Threads',
+    display: '@smtaseenkabir',
+    link: 'https://www.threads.net/@smtaseenkabir',
+    color: '#ffffff',
+    glow: 'rgba(255,255,255,0.3)',
+    gradient: 'linear-gradient(135deg, #000000, #262626)',
+    available: true,
+  },
   {
     icon: <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>,
     label: 'Twitter / X',
@@ -164,8 +164,8 @@ function ContactCard({ icon, label, display, link, color, glow, gradient, availa
           gap: '14px',
           padding: '28px 16px',
           borderRadius: '20px',
-          background: hovered ? 'var(--surface2)' : 'var(--surface)',
-          border: `1px solid ${hovered ? color : 'var(--border)'}`,
+          background: hovered ? 'var(--surface2, #111115)' : 'var(--surface, #09090b)',
+          border: `1px solid ${hovered ? color : 'var(--border, #1f2937)'}`,
           boxShadow: hovered
             ? `0 24px 60px ${glow}, 0 0 0 1px ${color}20, inset 0 1px 0 rgba(255,255,255,0.08)`
             : '0 4px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04)',
@@ -205,8 +205,8 @@ function ContactCard({ icon, label, display, link, color, glow, gradient, availa
           style={{
             width: '56px', height: '56px',
             borderRadius: '16px',
-            background: hovered ? gradient : 'var(--surface2)',
-            border: `1px solid ${hovered ? 'transparent' : 'var(--border)'}`,
+            background: hovered ? gradient : 'var(--surface2, #111115)',
+            border: `1px solid ${hovered ? 'transparent' : 'var(--border, #1f2937)'}`,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             color: hovered ? '#ffffff' : color,
             transition: 'all 0.3s ease',
@@ -222,7 +222,7 @@ function ContactCard({ icon, label, display, link, color, glow, gradient, availa
             fontFamily: "'Space Mono', monospace",
             fontSize: '9px', fontWeight: 700,
             letterSpacing: '2px', textTransform: 'uppercase',
-            color: hovered ? color : 'var(--text3)',
+            color: hovered ? color : 'var(--text3, #6b7280)',
             transition: 'color 0.3s',
             marginBottom: '5px',
           }}>
@@ -230,7 +230,7 @@ function ContactCard({ icon, label, display, link, color, glow, gradient, availa
           </div>
           <div style={{
             fontSize: '11px',
-            color: hovered ? 'var(--text)' : 'var(--text2)',
+            color: hovered ? 'var(--text, #f3f4f6)' : 'var(--text2, #9ca3af)',
             transition: 'color 0.3s',
             wordBreak: 'break-all',
             lineHeight: 1.4,
@@ -246,9 +246,9 @@ function ContactCard({ icon, label, display, link, color, glow, gradient, availa
             fontFamily: "'Space Mono', monospace",
             fontSize: '8px', fontWeight: 700,
             letterSpacing: '1.5px', textTransform: 'uppercase',
-            color: 'var(--text3)',
-            background: 'var(--surface2)',
-            border: '1px solid var(--border)',
+            color: 'var(--text3, #6b7280)',
+            background: 'var(--surface2, #111115)',
+            border: '1px solid var(--border, #1f2937)',
             padding: '3px 8px', borderRadius: '10px',
           }}>
             Soon
@@ -271,16 +271,26 @@ function MessageForm() {
     e.preventDefault();
     setStatus('sending');
     
+    const subject = encodeURIComponent(`Message from ${formData.name}`);
+    const body = encodeURIComponent(`Name: ${formData.name}\nEmail: ${formData.email}\n\nMessage:\n${formData.message}`);
+    
+    // FIX: '_blank' করা হয়েছে যাতে কারেন্ট পোর্টফোলিও স্ক্রিন ক্র্যাশ বা রিলোড না হয়
+    window.open(`mailto:s.m.taseenkabir8960@gmail.com?subject=${subject}&body=${body}`, '_blank');
+
     setTimeout(() => {
       setStatus('success');
       setFormData({ name: '', email: '', message: '' });
-    }, 1500);
+      
+      setTimeout(() => {
+        setStatus('');
+      }, 3500);
+    }, 1200);
   };
 
   return (
     <div style={{
-      background: 'var(--surface)',
-      border: '1px solid var(--border)',
+      background: 'var(--surface, #09090b)',
+      border: '1px solid var(--border, #1f2937)',
       padding: '32px',
       borderRadius: '24px',
       position: 'relative',
@@ -304,7 +314,7 @@ function MessageForm() {
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
         <div>
-          <label style={{ display: 'block', fontFamily: "'Space Mono', monospace", fontSize: '9px', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '8px' }}>Name</label>
+          <label style={{ display: 'block', fontFamily: "'Space Mono', monospace", fontSize: '9px', fontWeight: 700, color: 'var(--text3, #6b7280)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '8px' }}>Name</label>
           <input
             type="text"
             name="name"
@@ -312,14 +322,14 @@ function MessageForm() {
             value={formData.name}
             onChange={handleChange}
             placeholder="Your Alias"
-            style={{ width: '100%', padding: '12px 16px', background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text)', fontSize: '13px', outline: 'none', transition: 'all 0.3s' }}
+            style={{ width: '100%', padding: '12px 16px', background: 'var(--surface2, #111115)', border: '1px solid var(--border, #1f2937)', borderRadius: '12px', color: 'var(--text, #f3f4f6)', fontSize: '13px', outline: 'none', transition: 'all 0.3s' }}
             onFocus={(e) => e.target.style.borderColor = 'var(--cyan, #22d3ee)'}
-            onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
+            onBlur={(e) => e.target.style.borderColor = 'var(--border, #1f2937)'}
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', fontFamily: "'Space Mono', monospace", fontSize: '9px', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '8px' }}>Email</label>
+          <label style={{ display: 'block', fontFamily: "'Space Mono', monospace", fontSize: '9px', fontWeight: 700, color: 'var(--text3, #6b7280)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '8px' }}>Email</label>
           <input
             type="email"
             name="email"
@@ -327,14 +337,14 @@ function MessageForm() {
             value={formData.email}
             onChange={handleChange}
             placeholder="your@email.com"
-            style={{ width: '100%', padding: '12px 16px', background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text)', fontSize: '13px', outline: 'none', transition: 'all 0.3s' }}
+            style={{ width: '100%', padding: '12px 16px', background: 'var(--surface2, #111115)', border: '1px solid var(--border, #1f2937)', borderRadius: '12px', color: 'var(--text, #f3f4f6)', fontSize: '13px', outline: 'none', transition: 'all 0.3s' }}
             onFocus={(e) => e.target.style.borderColor = 'var(--cyan, #22d3ee)'}
-            onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
+            onBlur={(e) => e.target.style.borderColor = 'var(--border, #1f2937)'}
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', fontFamily: "'Space Mono', monospace", fontSize: '9px', fontWeight: 700, color: 'var(--text3)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '8px' }}>Message</label>
+          <label style={{ display: 'block', fontFamily: "'Space Mono', monospace", fontSize: '9px', fontWeight: 700, color: 'var(--text3, #6b7280)', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '8px' }}>Message</label>
           <textarea
             name="message"
             required
@@ -342,9 +352,9 @@ function MessageForm() {
             value={formData.message}
             onChange={handleChange}
             placeholder="Transmission payload..."
-            style={{ width: '100%', padding: '12px 16px', background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: '12px', color: 'var(--text)', fontSize: '13px', outline: 'none', resize: 'none', transition: 'all 0.3s' }}
+            style={{ width: '100%', padding: '12px 16px', background: 'var(--surface2, #111115)', border: '1px solid var(--border, #1f2937)', borderRadius: '12px', color: 'var(--text, #f3f4f6)', fontSize: '13px', outline: 'none', resize: 'none', transition: 'all 0.3s' }}
             onFocus={(e) => e.target.style.borderColor = 'var(--cyan, #22d3ee)'}
-            onBlur={(e) => e.target.style.borderColor = 'var(--border)'}
+            onBlur={(e) => e.target.style.borderColor = 'var(--border, #1f2937)'}
           />
         </div>
 
@@ -352,12 +362,12 @@ function MessageForm() {
           type="submit"
           disabled={status === 'sending'}
           style={{
-            width: '100%', padding: '14px', background: 'var(--cyan, #22d3ee)', color: '#000000', fontWeight: 700, fontFamily: "'Space Mono', monospace", fontSize: '12px', letterSpacing: '2px', textTransform: 'uppercase', border: 'none', borderRadius: '12px', cursor: 'pointer', transition: 'all 0.3s', boxShadow: '0 4px 20px rgba(34,211,238,0.2)'
+            width: '100%', padding: '14px', background: 'var(--cyan, #22d3ee)', color: '#000000', fontWeight: 700, fontFamily: "'Space Mono', monospace", fontSize: '12px', letterSpacing: '2px', textTransform: 'uppercase', border: 'none', borderRadius: '12px', cursor: status === 'sending' ? 'not-allowed' : 'pointer', transition: 'all 0.3s', boxShadow: '0 4px 20px rgba(34,211,238,0.2)'
           }}
-          onMouseEnter={(e) => e.target.style.boxShadow = '0 4px 30px rgba(34,211,238,0.5)'}
+          onMouseEnter={(e) => { if(status !== 'sending') e.target.style.boxShadow = '0 4px 30px rgba(34,211,238,0.5)' }}
           onMouseLeave={(e) => e.target.style.boxShadow = '0 4px 20px rgba(34,211,238,0.2)'}
         >
-          {status === 'sending' ? 'TRANSMITTING...' : status === 'success' ? 'MESSAGE SENT ✓' : 'Send Message →'}
+          {status === 'sending' ? 'LAUNCHING MAIL APP...' : status === 'success' ? 'OPENED IN EXTERNAL MAIL CLIENT ✓' : 'Send Message →'}
         </button>
       </form>
     </div>
@@ -377,6 +387,7 @@ export default function Contact() {
       <GlowOrb color="rgba(167,139,250,0.07)" size={500} bottom="5%" right="5%" />
       <GlowOrb color="rgba(244,114,182,0.05)" size={400} top="50%" left="35%" />
 
+      {/* Geometrical Background Matrix Matrix Elements */}
       <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', overflow: 'hidden' }}>
         {[...Array(20)].map((_, i) => (
           <motion.div
@@ -426,7 +437,7 @@ export default function Contact() {
             transition={{ delay: 0.2, duration: 0.7 }}
             className="section-title"
             style={{
-              background: 'linear-gradient(135deg, var(--text) 0%, var(--text2) 50%, var(--cyan) 100%)',
+              background: 'linear-gradient(135deg, var(--text, #f3f4f6) 0%, var(--text2, #9ca3af) 50%, var(--cyan, #22d3ee) 100%)',
               WebkitBackgroundClip: 'text',
               WebkitTextFillColor: 'transparent',
               backgroundClip: 'text',
@@ -440,7 +451,7 @@ export default function Contact() {
             animate={inView ? { opacity: 1 } : {}}
             transition={{ delay: 0.3 }}
             style={{
-              fontSize: '16px', color: 'var(--text2)',
+              fontSize: '16px', color: 'var(--text2, #9ca3af)',
               maxWidth: '480px', lineHeight: 1.7,
               margin: '0 auto 24px',
             }}
@@ -457,16 +468,16 @@ export default function Contact() {
             style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
               fontFamily: "'Space Mono', monospace",
-              fontSize: '11px', color: 'var(--text3)',
-              background: 'var(--surface)',
-              border: '1px solid var(--border)',
+              fontSize: '11px', color: 'var(--text3, #6b7280)',
+              background: 'var(--surface, #09090b)',
+              border: '1px solid var(--border, #1f2937)',
               padding: '6px 16px', borderRadius: '20px',
             }}
           >
             <motion.span
               animate={{ opacity: [1, 0, 1] }}
               transition={{ duration: 1.5, repeat: Infinity }}
-              style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--green)', display: 'inline-block' }}
+              style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--green, #10b981)', display: 'inline-block' }}
             />
             {availableCount} platforms active
           </motion.div>
@@ -489,7 +500,7 @@ export default function Contact() {
             <MessageForm />
           </motion.div>
 
-          {/* Grid */}
+          {/* Contact Grid */}
           <div style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
@@ -510,8 +521,8 @@ export default function Contact() {
           style={{
             textAlign: 'center',
             padding: '48px 32px',
-            background: 'var(--surface)',
-            border: '1px solid var(--border)',
+            background: 'var(--surface, #09090b)',
+            border: '1px solid var(--border, #1f2937)',
             borderRadius: '24px',
             position: 'relative',
             overflow: 'hidden',
@@ -528,7 +539,7 @@ export default function Contact() {
             transition={{ duration: 3, repeat: Infinity }}
             style={{
               fontFamily: "'Space Mono', monospace",
-              fontSize: '14px', color: 'var(--text2)',
+              fontSize: '14px', color: 'var(--text2, #9ca3af)',
               fontStyle: 'italic', marginBottom: '12px',
               position: 'relative', zIndex: 1,
             }}
@@ -538,7 +549,7 @@ export default function Contact() {
 
           <p style={{
             fontFamily: "'Space Mono', monospace",
-            fontSize: '11px', color: 'var(--text3)',
+            fontSize: '11px', color: 'var(--text3, #6b7280)',
             letterSpacing: '1px',
             position: 'relative', zIndex: 1,
           }}>
