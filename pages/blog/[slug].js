@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import Head from 'next/head';
+import ReadingProgress from '../../components/ReadingProgress'; // ইতিমধ্যে ইম্পোর্ট করা আছে
 import Link from 'next/link';
 import { motion, useInView } from 'framer-motion';
 import Footer from '../../components/Footer';
@@ -158,6 +159,8 @@ export default function BlogPost({ post, prev, next, theme, toggleTheme }) {
         <meta property="og:description" content={post.excerpt} />
       </Head>
 
+      {/* FIX: ReadingProgress কম্পোনেন্টটি এখানে যুক্ত করা হলো */}
+      <ReadingProgress />
 
       <main style={{ paddingTop: '64px' }}>
         <article style={{ padding: '60px 24px 100px' }}>
@@ -207,7 +210,7 @@ export default function BlogPost({ post, prev, next, theme, toggleTheme }) {
                 border: `1px solid ${post.color}30`,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
+                justify: 'center',
                 fontSize: '30px',
                 marginBottom: '24px',
               }}>

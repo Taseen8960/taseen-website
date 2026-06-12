@@ -5,6 +5,8 @@ import Header from '../components/Header';
 import CustomCursor from '../components/CustomCursor';
 import LoadingScreen from '../components/LoadingScreen';
 import PageTransition from '../components/PageTransition';
+import ReadingProgress from '../components/ReadingProgress';
+import BackToTop from '../components/BackToTop';
 import { AnimatePresence } from 'framer-motion';
 
 const ThreeBackground = dynamic(
@@ -33,16 +35,13 @@ export default function MyApp({ Component, pageProps, router }) {
 
   return (
     <>
-      {/* Cursor */}
       <CustomCursor />
+      <ReadingProgress />
+      <BackToTop />
 
-      {/* Three.js background */}
       {mounted && !loading && <ThreeBackground theme={theme} />}
-
-      {/* Grid */}
       <div className="grid-bg" />
 
-      {/* Loading screen */}
       <AnimatePresence>
         {loading && mounted && (
           <LoadingScreen onComplete={() => setLoading(false)} />
@@ -51,16 +50,9 @@ export default function MyApp({ Component, pageProps, router }) {
 
       {!loading && mounted && (
         <>
-          {/* Header OUTSIDE PageTransition — fixed position নষ্ট হবে না */}
           <Header theme={theme} toggleTheme={toggleTheme} />
-
-          {/* Page content */}
           <PageTransition>
-            <Component
-              {...pageProps}
-              theme={theme}
-              toggleTheme={toggleTheme}
-            />
+            <Component {...pageProps} theme={theme} toggleTheme={toggleTheme} />
           </PageTransition>
         </>
       )}
