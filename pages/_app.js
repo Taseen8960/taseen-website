@@ -8,6 +8,7 @@ import PageTransition from '../components/PageTransition';
 import ReadingProgress from '../components/ReadingProgress';
 import BackToTop from '../components/BackToTop';
 import { AnimatePresence } from 'framer-motion';
+import EasterEgg from '../components/EasterEgg';
 
 const ThreeBackground = dynamic(
   () => import('../components/ThreeBackground'),
@@ -36,6 +37,7 @@ export default function MyApp({ Component, pageProps, router }) {
   return (
     <>
       <CustomCursor />
+      <EasterEgg />
       <ReadingProgress />
       <BackToTop />
 

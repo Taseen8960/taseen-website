@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { motion, useInView, useAnimationControls } from 'framer-motion';
+import { motion, useAnimationControls } from 'framer-motion';
 import Link from 'next/link';
 import { blogPosts } from '../data/blog-posts';
 
@@ -9,8 +9,6 @@ function FloatingBlogCard({ post, index }) {
   const [hovered, setHovered] = useState(false);
   const [mouseX, setMouseX] = useState(50);
   const [mouseY, setMouseY] = useState(50);
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: '-80px' });
 
   const defaultRotateY = index % 3 === 0 ? 10 : index % 3 === 2 ? -10 : 0;
 
@@ -46,7 +44,6 @@ function FloatingBlogCard({ post, index }) {
 
   return (
     <motion.div
-      ref={ref}
       variants={floatVariants}
       animate="animate"
       style={{ 
@@ -69,13 +66,12 @@ function FloatingBlogCard({ post, index }) {
             position: 'relative',
             borderRadius: '24px',
             overflow: 'hidden',
-            // কার্ডের ব্যাকগ্রাউন্ড আরও ট্রান্সপারেন্ট করা হয়েছে যাতে পেছনের ব্যাকগ্রাউন্ড গ্লাস ভেদ করে দেখা যায়
-            background: hovered ? 'rgba(255, 255, 255, 0.06)' : 'rgba(255, 255, 255, 0.02)',
-            border: `1px solid ${hovered ? post.color : 'rgba(255, 255, 255, 0.05)'}`,
+            background: hovered ? 'var(--surface2)' : 'var(--surface)',
+            border: `1px solid ${hovered ? post.color : 'var(--border)'}`,
             boxShadow: hovered
               ? `0 40px 100px ${post.color}20, 0 0 40px ${post.color}10, inset 0 1px 1px rgba(255,255,255,0.1)`
-              : '0 20px 40px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.02)',
-            backdropFilter: 'blur(12px)', // গ্লাস ইফেক্ট বজায় থাকবে
+              : 'var(--shadow)',
+            backdropFilter: 'blur(16px)', 
             display: 'block',
           }}
           whileTap={{ cursor: 'grabbing' }}
@@ -84,7 +80,7 @@ function FloatingBlogCard({ post, index }) {
           <div style={{
             position: 'absolute', inset: 0,
             background: hovered 
-              ? `radial-gradient(circle at ${mouseX}% ${mouseY}%, rgba(255,255,255,0.1) 0%, transparent 50%), radial-gradient(circle at ${100 - mouseX}% ${100 - mouseY}%, ${post.color}10 0%, transparent 70%)`
+              ? `radial-gradient(circle at ${mouseX}% ${mouseY}%, rgba(255,255,255,0.12) 0%, transparent 50%), radial-gradient(circle at ${100 - mouseX}% ${100 - mouseY}%, ${post.color}15 0%, transparent 70%)`
               : 'linear-gradient(135deg, rgba(255,255,255,0.01) 0%, transparent 100%)',
             pointerEvents: 'none',
             borderRadius: '24px',
@@ -101,14 +97,14 @@ function FloatingBlogCard({ post, index }) {
             <div style={{
               display: 'flex', justifyContent: 'space-between', alignItems: 'center',
               marginBottom: '20px', paddingBottom: '14px',
-              borderBottom: `1px solid ${hovered ? post.color + '25' : 'rgba(255,255,255,0.05)'}`,
+              borderBottom: `1px solid ${hovered ? post.color + '25' : 'var(--border)'}`,
             }}>
               <div style={{ display: 'flex', gap: '6px' }}>
                 {['#ff5f57', '#ffbd2e', '#28c840'].map((c, i) => (
-                  <div key={i} style={{ width: '7px', height: '7px', borderRadius: '50%', background: hovered ? c : 'rgba(255,255,255,0.1)' }} />
+                  <div key={i} style={{ width: '7px', height: '7px', borderRadius: '50%', background: hovered ? c : 'var(--border2)' }} />
                 ))}
               </div>
-              <div style={{ fontFamily: "'Space Mono', monospace", fontSize: '10px', color: 'rgba(255,255,255,0.4)' }}>
+              <div style={{ fontFamily: "var(--font-mono)", fontSize: '10px', color: 'var(--text3)' }}>
                 <span>{post.readTime}</span>
               </div>
             </div>
@@ -123,18 +119,18 @@ function FloatingBlogCard({ post, index }) {
                 {post.icon}
               </div>
               <div>
-                <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: '17px', fontWeight: 800, color: '#fff', lineHeight: 1.3, marginBottom: '4px' }}>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: '17px', fontWeight: 800, color: 'var(--text)', lineHeight: 1.3, marginBottom: '4px' }}>
                   {post.title}
                 </h3>
-                <p style={{ fontFamily: "'Space Mono', monospace", fontSize: '9px', color: post.color }}>{post.tags[0]}</p>
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: '9px', color: post.color }}>{post.tags[0]}</p>
               </div>
             </div>
 
-            <p style={{ fontSize: '13px', color: 'rgba(255,255,255,0.6)', lineHeight: 1.6, marginBottom: '20px' }}>
+            <p style={{ fontSize: '13px', color: 'var(--text2)', lineHeight: 1.6, marginBottom: '20px' }}>
               {post.excerpt}
             </p>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontFamily: "'Space Mono', monospace", fontSize: '11px', color: hovered ? post.color : 'rgba(255,255,255,0.4)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontFamily: "var(--font-mono)", fontSize: '11px', color: hovered ? post.color : 'var(--text3)' }}>
               Read Article →
             </div>
           </div>
@@ -149,42 +145,43 @@ export default function LatestBlogs() {
   const controls = useAnimationControls();
   const [isHovered, setIsHovered] = useState(false);
 
+  // নিখুঁত ইনফিনিটি রাইট-টু-লেফট লুপের জন্য ৩ বার ডুপ্লিকেট করা হলো
   const duplicatedPosts = [...blogPosts, ...blogPosts, ...blogPosts];
 
   useEffect(() => {
     if (!isHovered) {
+      // আপনার আগের কোডের অ্যানিমেশন কন্ট্রোলস ফিরিয়ে আনা হলো
       controls.start({
         x: '-33.33%', 
         transition: {
           ease: 'linear',
-          duration: 25, 
+          duration: 35, // স্পিড কন্ট্রোল (ভ্যালু বাড়ালে আস্তে চলবে, কমালে জোরে)
           repeat: Infinity,
         },
       });
     } else {
-      controls.stop(); 
+      controls.stop(); // মাউস হোভারে স্মুথ পজ
     }
   }, [isHovered, controls]);
 
   return (
-    // FIX: background কালার সরিয়ে 'transparent' করা হয়েছে যাতে আপনার মেইন ওয়েবসাইটের ব্যাকগ্রাউন্ড শো করে
     <section style={{ padding: '120px 0', position: 'relative', overflow: 'hidden', background: 'transparent' }}>
       
-      {/* ব্যাকগ্রাউন্ড হোলোগ্রাফিক নিয়ন লাইট (এটির অপাসিটি কিছুটা কমানো হয়েছে যাতে মেইন ব্যাকগ্রাউন্ডের সাথে সুন্দর ব্লেন্ড হয়) */}
+      {/* ব্যাকগ্রাউন্ড গ্লো ইফেক্ট */}
       <div style={{
         position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
         width: '900px', height: '400px',
-        background: 'radial-gradient(ellipse, rgba(99, 102, 241, 0.03) 0%, transparent 70%)',
+        background: 'radial-gradient(ellipse, rgba(34, 211, 238, 0.04) 0%, transparent 70%)',
         filter: 'blur(100px)', pointerEvents: 'none',
       }} />
 
       {/* হেডার টেক্সট */}
       <div style={{ maxWidth: '1200px', margin: '0 auto 60px auto', padding: '0 24px' }}>
-        <div className="section-tag" style={{ color: 'var(--cyan)', fontFamily: "'Space Mono', monospace", fontSize: '12px', letterSpacing: '2px', textTransform: 'uppercase', marginBottom: '8px' }}>Holographic Feed</div>
-        <h2 className="section-title" style={{ fontFamily: "'Syne', sans-serif", fontSize: '38px', fontWeight: 800, color: '#fff' }}>Floating DevLogs</h2>
+        <div className="section-tag">Holographic Feed</div>
+        <h2 className="section-title" style={{ color: 'var(--text)' }}>Floating DevLogs</h2>
       </div>
 
-      {/* ৩ডি ক্যারোসেল কন্টেইনার */}
+      {/* ৩ডি ইনফিনিটি লুপ কন্টেইনার */}
       <div 
         style={{ width: '100%', overflow: 'hidden', cursor: 'grab' }}
         onMouseEnter={() => setIsHovered(true)}
